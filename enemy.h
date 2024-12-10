@@ -15,7 +15,7 @@
 #include"model.h"
 
 //マクロ定義.......................................................
-#define MAX_ENEMY (4)
+#define MAX_ENEMY (1)
 #define MAX_KEY_ENEMY (10)						//キーの最大数
 #define MAX_MAT_ENEMY (512)						//マトリックスの最大数
 #define MAX_MOTION_ENEMY (4)					//モーションの最大数
@@ -94,6 +94,7 @@ void UpdateEnemy();												//敵の更新処理
 void DrawEnemy();												//敵の描画処理
 void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 rot);				//敵の設定処理
 void SetMotionEnemy(MOTIONTYPE_ENEMY type);						//敵のモーション設定
+bool CollisionEnemy();											//敵の当たり判定
 Enemy* GetEnemy();												//敵の情報取得
 
 #endif // !_MODEL_H_

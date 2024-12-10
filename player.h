@@ -92,7 +92,8 @@ void UninitPlayer();					//プレイヤーの終了処理
 void UpdatePlayer();					//プレイヤーの更新処理
 void DrawPlayer();						//プレイヤーの描画処理
 void SetMotion(MOTIONTYPE type);		//プレイヤーのモーション設定
-void LoadModel(int index);						//プレイヤーのモデル読込
+void LoadModel(int index);				//プレイヤーのモデル読込
+void LoadMotionPlayer();				//プレイヤーモーションの読込
 Player* GetPlayer();					//プレイヤーの情報取得
 
 #endif // !_MODEL_H_

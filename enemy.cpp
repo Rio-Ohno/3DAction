@@ -443,46 +443,49 @@ void UpdateEnemy()
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		g_enemy[nCntEnemy].posOld = g_enemy[nCntEnemy].pos;
-
-		g_enemy[nCntEnemy].move.y -= 0.8f;
-
-		g_enemy[nCntEnemy].rot.y += (g_enemy[nCntEnemy].rotDest.y - g_enemy[nCntEnemy].rot.y) * 0.15f;
-
-		//位置の更新
-		g_enemy[nCntEnemy].pos += g_enemy[nCntEnemy].move;
-
-		//移動量の更新(減衰)
-		g_enemy[nCntEnemy].move.x = (0.0f - g_enemy[nCntEnemy].move.x) * 0.1f;
-		g_enemy[nCntEnemy].move.y = (0.0f - g_enemy[nCntEnemy].move.y) * 0.1f;
-		g_enemy[nCntEnemy].move.z = (0.0f - g_enemy[nCntEnemy].move.z) * 0.1f;
-
-		//床判定
-		if (g_enemy[nCntEnemy].pos.y < 0)
+		if (g_enemy[nCntEnemy].bUse == true)
 		{
-			g_enemy[nCntEnemy].pos.y = 0;
-			g_enemy[nCntEnemy].bjump = false;
+			g_enemy[nCntEnemy].posOld = g_enemy[nCntEnemy].pos;
+
+			g_enemy[nCntEnemy].move.y -= 0.8f;
+
+			g_enemy[nCntEnemy].rot.y += (g_enemy[nCntEnemy].rotDest.y - g_enemy[nCntEnemy].rot.y) * 0.15f;
+
+			//位置の更新
+			g_enemy[nCntEnemy].pos += g_enemy[nCntEnemy].move;
+
+			//移動量の更新(減衰)
+			g_enemy[nCntEnemy].move.x = (0.0f - g_enemy[nCntEnemy].move.x) * 0.1f;
+			g_enemy[nCntEnemy].move.y = (0.0f - g_enemy[nCntEnemy].move.y) * 0.1f;
+			g_enemy[nCntEnemy].move.z = (0.0f - g_enemy[nCntEnemy].move.z) * 0.1f;
+
+			//床判定
+			if (g_enemy[nCntEnemy].pos.y < 0)
+			{
+				g_enemy[nCntEnemy].pos.y = 0;
+				g_enemy[nCntEnemy].bjump = false;
+			}
+
+			//影の位置更新
+			SetPositionShadow(g_enemy[nCntEnemy].nIndxShadow, g_enemy[nCntEnemy].pos);
+
+			//目標の移動方向（角度）の補正
+			if (g_enemy[nCntEnemy].rot.y > D3DX_PI)
+			{
+				g_enemy[nCntEnemy].rot.y -= D3DX_PI * 2.0f;
+			}
+			else if (g_enemy[nCntEnemy].rot.y < -D3DX_PI)
+			{
+				g_enemy[nCntEnemy].rot.y += D3DX_PI * 2.0f;
+			}
+
+			//当たり判定
+			//CollisionBlock_X();
+			//CollisionBlock_Z();
+			g_enemy[nCntEnemy].bFrag = CollisionWall();
+
+			SetMotionEnemy(g_enemy[nCntEnemy].motionType);
 		}
-
-		//影の位置更新
-		SetPositionShadow(g_enemy[nCntEnemy].nIndxShadow, g_enemy[nCntEnemy].pos);
-
-		//目標の移動方向（角度）の補正
-		if (g_enemy[nCntEnemy].rot.y > D3DX_PI)
-		{
-			g_enemy[nCntEnemy].rot.y -= D3DX_PI * 2.0f;
-		}
-		else if (g_enemy[nCntEnemy].rot.y < -D3DX_PI)
-		{
-			g_enemy[nCntEnemy].rot.y += D3DX_PI * 2.0f;
-		}
-
-		//当たり判定
-		//CollisionBlock_X();
-		//CollisionBlock_Z();
-		g_enemy[nCntEnemy].bFrag = CollisionWall();
-
-		SetMotionEnemy(g_enemy[nCntEnemy].motionType);
 	}
 
 }
@@ -500,76 +503,78 @@ void DrawEnemy()
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		//ワールドマトリックスの初期化
-		D3DXMatrixIdentity(&g_enemy[nCntEnemy].mtxWorldEnemy);
-
-		//向きを反映
-		D3DXMatrixRotationYawPitchRoll(&mtxRot, g_enemy[nCntEnemy].rot.y, g_enemy[nCntEnemy].rot.x, g_enemy[nCntEnemy].rot.z);
-		D3DXMatrixMultiply(&g_enemy[nCntEnemy].mtxWorldEnemy, &g_enemy[nCntEnemy].mtxWorldEnemy, &mtxRot);
-
-		//位置を反映
-		D3DXMatrixTranslation(&mtxTrans, g_enemy[nCntEnemy].pos.x, g_enemy[nCntEnemy].pos.y, g_enemy[nCntEnemy].pos.z);
-		D3DXMatrixMultiply(&g_enemy[nCntEnemy].mtxWorldEnemy, &g_enemy[nCntEnemy].mtxWorldEnemy, &mtxTrans);
-
-		//ワールドマトリックスの設定
-		pDevice->SetTransform(D3DTS_WORLD, &g_enemy[nCntEnemy].mtxWorldEnemy);
-
-		//現在のマテリアルを取得
-		pDevice->GetMaterial(&matDef);
-
-
-		for (int nCntModel = 0; nCntModel < g_enemy[nCntEnemy].nNumModel; nCntModel++)
+		if (g_enemy[nCntEnemy].bUse == true)
 		{
-			D3DXMATRIX  mtxRotModel, mtxTransModel;	//計算用マトリックス
-			D3DXMATRIX mtxParent;				//親のマtリックス
-
-			//マテリアルデータへのポインタを取得
-			pMat = (D3DXMATERIAL*)g_enemy[nCntEnemy].aModel[nCntModel].pBuffMat->GetBufferPointer();
-
-			//パーツのワールドマトリックスの初期化
-			D3DXMatrixIdentity(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld);
+			//ワールドマトリックスの初期化
+			D3DXMatrixIdentity(&g_enemy[nCntEnemy].mtxWorldEnemy);
 
 			//向きを反映
-			D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_enemy[nCntEnemy].aModel[nCntModel].rot.y, g_enemy[nCntEnemy].aModel[nCntModel].rot.x, g_enemy[nCntEnemy].aModel[nCntModel].rot.z);
-			D3DXMatrixMultiply(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &mtxRotModel);
+			D3DXMatrixRotationYawPitchRoll(&mtxRot, g_enemy[nCntEnemy].rot.y, g_enemy[nCntEnemy].rot.x, g_enemy[nCntEnemy].rot.z);
+			D3DXMatrixMultiply(&g_enemy[nCntEnemy].mtxWorldEnemy, &g_enemy[nCntEnemy].mtxWorldEnemy, &mtxRot);
 
 			//位置を反映
-			D3DXMatrixTranslation(&mtxTransModel, g_enemy[nCntEnemy].aModel[nCntModel].pos.x, g_enemy[nCntEnemy].aModel[nCntModel].pos.y, g_enemy[nCntEnemy].aModel[nCntModel].pos.z);
-			D3DXMatrixMultiply(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &mtxTransModel);
+			D3DXMatrixTranslation(&mtxTrans, g_enemy[nCntEnemy].pos.x, g_enemy[nCntEnemy].pos.y, g_enemy[nCntEnemy].pos.z);
+			D3DXMatrixMultiply(&g_enemy[nCntEnemy].mtxWorldEnemy, &g_enemy[nCntEnemy].mtxWorldEnemy, &mtxTrans);
 
-			//パーツの親マトリックスの設定
-			if (g_enemy[nCntEnemy].aModel[nCntModel].nIndxModelpParent != -1)//子の時
+			//ワールドマトリックスの設定
+			pDevice->SetTransform(D3DTS_WORLD, &g_enemy[nCntEnemy].mtxWorldEnemy);
+
+			//現在のマテリアルを取得
+			pDevice->GetMaterial(&matDef);
+
+
+			for (int nCntModel = 0; nCntModel < g_enemy[nCntEnemy].nNumModel; nCntModel++)
 			{
-				mtxParent = g_enemy[nCntEnemy].aModel[g_enemy[nCntEnemy].aModel[nCntModel].nIndxModelpParent].mtxWorld;
+				D3DXMATRIX  mtxRotModel, mtxTransModel;	//計算用マトリックス
+				D3DXMATRIX mtxParent;				//親のマtリックス
+
+				//マテリアルデータへのポインタを取得
+				pMat = (D3DXMATERIAL*)g_enemy[nCntEnemy].aModel[nCntModel].pBuffMat->GetBufferPointer();
+
+				//パーツのワールドマトリックスの初期化
+				D3DXMatrixIdentity(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld);
+
+				//向きを反映
+				D3DXMatrixRotationYawPitchRoll(&mtxRotModel, g_enemy[nCntEnemy].aModel[nCntModel].rot.y, g_enemy[nCntEnemy].aModel[nCntModel].rot.x, g_enemy[nCntEnemy].aModel[nCntModel].rot.z);
+				D3DXMatrixMultiply(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &mtxRotModel);
+
+				//位置を反映
+				D3DXMatrixTranslation(&mtxTransModel, g_enemy[nCntEnemy].aModel[nCntModel].pos.x, g_enemy[nCntEnemy].aModel[nCntModel].pos.y, g_enemy[nCntEnemy].aModel[nCntModel].pos.z);
+				D3DXMatrixMultiply(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &mtxTransModel);
+
+				//パーツの親マトリックスの設定
+				if (g_enemy[nCntEnemy].aModel[nCntModel].nIndxModelpParent != -1)//子の時
+				{
+					mtxParent = g_enemy[nCntEnemy].aModel[g_enemy[nCntEnemy].aModel[nCntModel].nIndxModelpParent].mtxWorld;
+				}
+				else//親の時
+				{
+					mtxParent = g_enemy[nCntEnemy].mtxWorldEnemy;
+				}
+
+				//算出したパーツのワールドマトリックスと親のマトリックスをかけ合わせる
+				D3DXMatrixMultiply(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &mtxParent);
+
+				//パーツのワールドマトリックスの設定
+				pDevice->SetTransform(D3DTS_WORLD, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld);
+
+				for (int nCnt1 = 0; nCnt1 < (int)g_enemy[nCntEnemy].aModel[nCntModel].dwNumMat; nCnt1++)
+				{
+					//マテリアルの設定
+					pDevice->SetMaterial(&pMat[nCnt1].MatD3D);
+
+					//テクスチャの設定
+					pDevice->SetTexture(0, g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCnt1]);
+
+					//モデル(パーツ)の描画
+					g_enemy[nCntEnemy].aModel[nCntModel].pMesh->DrawSubset(nCnt1);
+				}
+
 			}
-			else//親の時
-			{
-				mtxParent = g_enemy[nCntEnemy].mtxWorldEnemy;
-			}
-
-			//算出したパーツのワールドマトリックスと親のマトリックスをかけ合わせる
-			D3DXMatrixMultiply(&g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld, &mtxParent);
-
-			//パーツのワールドマトリックスの設定
-			pDevice->SetTransform(D3DTS_WORLD, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld);
-
-			for (int nCnt1 = 0; nCnt1 < (int)g_enemy[nCntEnemy].aModel[nCntModel].dwNumMat; nCnt1++)
-			{
-				//マテリアルの設定
-				pDevice->SetMaterial(&pMat[nCnt1].MatD3D);
-
-				//テクスチャの設定
-				pDevice->SetTexture(0, g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCnt1]);
-
-				//モデル(パーツ)の描画
-				g_enemy[nCntEnemy].aModel[nCntModel].pMesh->DrawSubset(nCnt1);
-			}
-
+			//保存していたマテリアルを戻す
+			pDevice->SetMaterial(&matDef);
 		}
-		//保存していたマテリアルを戻す
-		pDevice->SetMaterial(&matDef);
 	}
-
 }
 
 //============================================================
@@ -676,27 +681,54 @@ void SetMotionEnemy(MOTIONTYPE_ENEMY type)
 //============================================================
 // 敵の当たり判定
 //============================================================
-//bool CollisionEnemy()
-//{
-//	D3DXVECTOR3 ver[16];
-//
-//	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
-//	{
-//		for (int nCntz = 0; nCntz <= 1; nCntz++)
-//		{
-//			for (int nCntx = 0; nCntx <= 8; nCntx++)
-//			{
-//				int index = nCntx + nCntz * (8 + 1);
-//
-//				float fAngle = D3DX_PI * 2 / 8 * nCntx;
-//				//radian=180/D3DX_PI
-//
-//				//頂点座標の設定
-//				ver[index] = D3DXVECTOR3(sinf(fAngle) * g_enemy[nCntEnemy].vtxMax.z, g_enemy[nCntEnemy].vtxMax.y * (1 - nCntz), cosf(fAngle) * g_enemy[nCntEnemy].vtxMax.z);
-//			}
-//		}
-//	}
-//}
+bool CollisionEnemy()
+{
+	D3DXVECTOR3 ver[16];
+	D3DXVECTOR3 Pos[2];
+	Player* pPlayer = GetPlayer();
+	bool bLanding = false;
+
+	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
+	{
+		//左右の当たり判定
+		if ((pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
+			(pPlayer->pos.z + (pPlayer->size.z / 2)) > (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z))
+		{
+			if ((pPlayer->posOld.x + (pPlayer->size.x / 2)) <= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) &&
+				(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
+			{
+				pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) - pPlayer->size.x / 2;
+				bLanding = true;
+			}
+			else if ((pPlayer->posOld.x - (pPlayer->size.x / 2)) >= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
+				(pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x))
+			{
+				pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) + pPlayer->size.x / 2;
+				bLanding = true;
+			}
+		}
+
+		//前後の当たり判定
+		if ((pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
+			(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
+		{
+			if ((pPlayer->posOld.z + (pPlayer->size.z / 2)) <= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) &&
+				(pPlayer->pos.z + (pPlayer->size.z / 2)) > (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z))
+			{
+				pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) - pPlayer->size.z / 2;
+				bLanding = true;
+			}
+			else if ((pPlayer->posOld.z - (pPlayer->size.z / 2)) >= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
+				(pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z))
+			{
+				pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) + pPlayer->size.z / 2;
+				bLanding = true;
+			}
+		}
+
+	}
+	return bLanding;
+}
 
 //============================================================
 // 敵の情報取得

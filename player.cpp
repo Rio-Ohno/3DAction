@@ -9,7 +9,9 @@
 #include "bullet.h"
 //#include "block.h"
 #include "wall.h"
+#include"enemy.h"
 #include<stdio.h>
+#include<string.h>
 
 //グロ－バル変数宣言
 Player g_player;
@@ -51,7 +53,7 @@ static  Key_Info g_keyNeutrall[] =
 	//Key1......................................................
    {40,
 	//パーツ0
-	{{0.0f,0.0f,0.0f,0.06f, 0.0f, 0.0f},
+	{{0.0f,0.0f,0.0f,-0.0f, 0.0f, 0.0f},
 	//パーツ1
 	 {0.0f,0.0f,0.0f,-0.09f, 0.0f, 0.0f},
 	//パーツ2
@@ -83,42 +85,76 @@ static  Key_Info g_keyNeutrall[] =
 	}}
 };
 
-//static  Key_Info g_keyAction[] =
-//{
-//	   {40,
-//	   //パーツ0
-//	   {{0.0f,0.0f,0.0f,0.06f, 0.0f, 0.0f},
-//	   //パーツ1
-//		{0.0f,0.0f,0.0f,-0.09f, 0.0f, 0.0f},
-//		//パーツ2
-//		 {0.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f},
-//		 //パーツ3
-//		  {0.0f,0.0f,0.0f, 0.0f, 0.0f, 0.0f},
-//		  //パーツ4
-//		   {0.0f,0.0f,0.0f,-0.06f,0.0f,1.13f},
-//		   //パーツ5
-//			{0.0f,0.0f,0.0f,0.0f,-0.6f,0.13f},
-//			//パーツ6
-//			  {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f},
-//			  //パーツ7
-//			   {0.0f,0.0f,0.0f,-0.06f,0.0f,-1.13f},
-//			   //パーツ8
-//				{0.0f,0.0f,0.0f,0.0f,0.6f,-0.13f},
-//				//パーツ9
-//				 {0.0f,0.0f,0.0f,0.03f,0.0f,0.0f},
-//				 //パーツ10
-//				  {0.0f,0.0f,0.0f,-0.5f,0.0f,-0.22f},
-//				  //パーツ11
-//				   {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f},
-//				   //パーツ12
-//					{0.0f,0.0f,0.0f,0.03f,0.0f,0.0f},
-//					//パーツ13
-//					 {0.0f,0.0f,0.0f,-0.5f,0.0f,0.22f},
-//					 //パーツ14
-//					  {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f}
-//					 }}
-//
-//};
+static  Key_Info g_keyAction[] =
+{
+	   {20,
+	   //パーツ0
+	   {{0.0f,0.0f,0.0f,0.03f, 0.16f, 0.0f},
+	   //パーツ1
+		{0.0f,0.0f,0.0f,0.0f, 0.31f, 0.0f},
+		//パーツ2
+		 {0.0f, 0.0f,0.0f, -0.03f, 0.09f, 0.0f},
+		 //パーツ3
+		  {0.0f,0.0f,0.0f, 0.09f, 0.06f, 0.0f},
+		  //パーツ4
+		   {0.0f,0.0f,0.0f,-0.79f,0.35f,1.13f},
+		   //パーツ5
+			{0.0f,0.0f,0.0f,0.09f,-1.6f,0.0f},
+			//パーツ6
+			  {0.0f,0.0f,0.0f,0.0f,0.09f,0.03f},
+			  //パーツ7
+			   {0.0f,0.0f,0.0f,0.13f,1.54f,-1.04f},
+			   //パーツ8
+				{0.0f,0.0f,0.0f,0.03f,0.94f,-0.91f},
+				//パーツ9
+				 {0.0f,0.0f,0.0f,-0.53f,0.0f,0.0f},
+				 //パーツ10
+				  {0.0f,0.0f,0.0f,-0.44f,0.09f,0.0f},
+				  //パーツ11
+				   {0.0f,0.0f,0.0f,0.69f,0.0f,0.0f},
+				   //パーツ12
+					{0.0f,0.0f,0.0f,1.01f,0.03f,0.0f},
+					//パーツ13
+					 {0.0f,0.0f,0.0f,-1.04f,0.0f,0.0f},
+					 //パーツ14
+					  {0.0f,0.0f,0.0f,-0.06f,0.06f,0.0f}
+					 }}
+	,	   
+	{20,
+	//パーツ0
+	{{0.0f,0.0f,0.0f,-0.25f, -0.16f, 0.0f},
+	//パーツ1
+	 {0.0f,0.0f,0.0f,0.0f, -0.19f, 0.0f},
+	//パーツ2
+	 {0.0f, 0.0f,0.0f, -0.03f, 0.16f, 0.0f},
+	//パーツ3
+	 {0.0f,0.0f,0.0f, 0.06f, -0.35f, 0.0f},
+	//パーツ4
+	 {0.0f,0.0f,0.0f,1.73f,0.57f,1.54f},
+	//パーツ5
+	 {0.0f,0.0f,0.0f,0.09f,0.0f,0.28f},
+	//パーツ6
+	  {0.0f,0.0f,0.0f,0.0f,-0.13f,0.03f},
+	//パーツ7
+	 {0.0f,0.0f,0.0f,-0.35f,1.48f,-2.39f},
+	//パーツ8
+	 {0.0f,0.0f,0.0f,-0.5f,0.35f,1.7f},
+	//パーツ9
+	 {0.0f,0.0f,0.0f,-0.69f,0.0f,0.0f},
+	//パーツ10
+	 {0.0f,0.0f,0.0f,-0.41f,0.09f,0.0f},
+	//パーツ11
+	 {0.0f,0.0f,0.0f,0.28f,0.0f,0.0f},
+	//パーツ12
+	 {0.0f,0.0f,0.0f,1.35f,0.03f,0.0f},
+	//パーツ13
+	 {0.0f,0.0f,0.0f,-1.23f,0.0f,0.0f},
+	//パーツ14
+	 {0.0f,0.0f,0.0f,-0.13f,0.06f,0.0f}
+	}}
+
+
+};
 
 //============================================================
 // プレイヤーの初期化処理
@@ -351,6 +387,8 @@ void InitPlayer()
 	g_player.aModel[14].pos = D3DXVECTOR3(0.0f, -5.0f, 0.0f);
 	g_player.aModel[14].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
+	////外部からモーション読込
+	//LoadMotionPlayer();
 
 	for (int nCntModel = 0; nCntModel < g_player.nNumModel; nCntModel++)
 	{
@@ -527,7 +565,6 @@ void UpdatePlayer()
 	if (KeyboardTrigger(DIK_RETURN) == true)
 	{
 		g_player.motionType = MOTIONTYPE_ACTION;
-
 	}
 
 	g_player.move.y -= 0.8f;
@@ -550,7 +587,7 @@ void UpdatePlayer()
 	}
 
 	//影の位置更新
-	SetPositionShadow(g_player.nIndxShadow, g_player.pos);
+	SetPositionShadow(g_player.nIndxShadow, D3DXVECTOR3(g_player.pos.x,0.1f,g_player.pos.z));
 
 	//目標の移動方向（角度）の補正
 	if (g_player.rot.y > D3DX_PI)
@@ -566,6 +603,7 @@ void UpdatePlayer()
 	//CollisionBlock_X();
 	//CollisionBlock_Z();
 	g_player.bFrag = CollisionWall();
+	bool bCollEnemy = CollisionEnemy();
   
 	SetMotion(g_player.motionType);
 
@@ -657,9 +695,6 @@ void DrawPlayer()
 //============================================================
 void SetMotion(MOTIONTYPE type)
 {
-	//外部ファイルへのポインタ
-	FILE* pFile = fopen("data\\MODEL\\player\\motion.txt","r");
-	//Motion_Info Motion;
 	int nCntLoad = 0;//読込を繰り返す回数
 	int nCntKey = 0;
 	int ModelIndex = 0;
@@ -670,6 +705,12 @@ void SetMotion(MOTIONTYPE type)
 
 		g_player.nNumKey = 2;
 		g_player.bLoopMotion = true;
+
+		for (int nCnt = 0; nCnt < g_player.nNumKey; nCnt++)
+		{
+			g_player.aMotionInfo[g_player.motionType].aKeyInfo[nCnt] = g_keyNeutrall[nCnt];
+		}
+
 		break;
 
 	case MOTIONTYPE_MOVE:
@@ -680,7 +721,13 @@ void SetMotion(MOTIONTYPE type)
 
 	case MOTIONTYPE_ACTION:
 
-		nCntLoad = 3;
+		g_player.nNumKey = 2;
+		g_player.bLoopMotion = false;
+
+		for (int nCnt = 0; nCnt < g_player.nNumKey; nCnt++)
+		{
+			g_player.aMotionInfo[g_player.motionType].aKeyInfo[nCnt] = g_keyAction[nCnt];
+		}
 
 		break;
 
@@ -691,6 +738,7 @@ void SetMotion(MOTIONTYPE type)
 		break;
 
 	}
+
 
 	//全モデル(パーツ)の更新
 	for (int nCntModel = 0; nCntModel < g_player.nNumModel; nCntModel++)
@@ -705,32 +753,57 @@ void SetMotion(MOTIONTYPE type)
 				g_player.nKey = 0;
 			}
 		}
+		else if (g_player.bLoopMotion == false)
+		{
+			if (g_player.nKey >= g_player.nNumKey)
+			{//キーの最大数より大きくなったら
+				g_player.motionType = MOTIONTYPE_NEUTRAL;
+				g_player.nKey = 0;
+			}
+		}
 
 		//差分格納用　　
 		D3DXVECTOR3 sPos, sRot;
 
-		sPos.x = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosX - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosX;
-		sPos.y = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosY - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosY;
-		sPos.z = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosZ - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosZ;
+		sPos.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fPosX - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosX;
+		sPos.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fPosY - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosY;
+		sPos.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fPosZ - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosZ;
 
-		sRot.x = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotX - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotX;
-		sRot.y = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotY - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotY;
-		sRot.z = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotZ - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotZ;
+		sRot.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotX - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotX;
+		sRot.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotY - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotY;
+		sRot.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotZ - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotZ;
+
+		//sPos.x = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosX - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosX;
+		//sPos.y = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosY - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosY;
+		//sPos.z = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosZ - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosZ;
+
+		//sRot.x = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotX - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotX;
+		//sRot.y = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotY - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotY;
+		//sRot.z = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotZ - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotZ;
 
 
 		//計算結果格納用
 		D3DXVECTOR3 fAnsPos, fAnsRot;
 
 		//(モーションカウンター)/(再生フレーム数)
-		float fData = (float)g_player.nCounterMotion / g_keyNeutrall[g_player.nKey].nFrame;
+		float fData = (float)g_player.nCounterMotion / g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].nFrame;
+		//float fData = (float)g_player.nCounterMotion / g_keyNeutrall[g_player.nKey].nFrame;
 
-		fAnsPos.x = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosX + sPos.x * fData;
-		fAnsPos.y = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosY + sPos.y * fData;
-		fAnsPos.z = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosZ + sPos.z * fData;
+		fAnsPos.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosX + sPos.x * fData;
+		fAnsPos.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosY + sPos.y * fData;
+		fAnsPos.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosZ + sPos.z * fData;
 
-		fAnsRot.x = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotX + sRot.x * fData;
-		fAnsRot.y = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotY + sRot.y * fData;
-		fAnsRot.z = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotZ + sRot.z * fData;
+		fAnsRot.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotX + sRot.x * fData;
+		fAnsRot.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotY + sRot.y * fData;
+		fAnsRot.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotZ + sRot.z * fData;
+
+		//fAnsPos.x = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosX + sPos.x * fData;
+		//fAnsPos.y = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosY + sPos.y * fData;
+		//fAnsPos.z = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosZ + sPos.z * fData;
+
+		//fAnsRot.x = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotX + sRot.x * fData;
+		//fAnsRot.y = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotY + sRot.y * fData;
+		//fAnsRot.z = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotZ + sRot.z * fData;
 
 		//位置と向きを反映
 		g_player.aModel[nCntModel].pos += fAnsPos;
@@ -741,7 +814,7 @@ void SetMotion(MOTIONTYPE type)
 	g_player.nCounterMotion++;
 
 	//カウンターが再生フレームより大きくなったら
-	if (g_player.nCounterMotion >= g_keyNeutrall[g_player.nKey].nFrame)
+	if (g_player.nCounterMotion >= g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].nFrame)
 	{
 		g_player.nCounterMotion = 0;
 		g_player.nKey++;
@@ -749,9 +822,124 @@ void SetMotion(MOTIONTYPE type)
 }
 
 //============================================================
-// プレイヤーのモデル読込
+// プレイヤーのモーション読込
 //============================================================
+void LoadMotionPlayer()
+{
+	int motionType = MOTIONTYPE_NEUTRAL;
+	int nNummodel = 0;
+	int nNumKey = 0;
+	int ver = 0;
 
+	FILE* pFile;
+	pFile = fopen("data\\MODEL\\player\\motion.txt", "r");
+
+	if (pFile != NULL)
+	{
+		while (1)
+		{
+			char aString[128];
+			//ファイルを読みこむ
+			fscanf(pFile, "%s", &aString[0]);
+
+			if (strcmp(aString, "MOTIONSET") == 0)//ENEMYSETを読込んだなら
+			{
+				while (1)
+				{
+					//ファイルを読みこむ
+					fscanf(pFile, "%s", &aString[0]);
+
+					if (strcmp(aString, "LOOP") == 0)
+					{
+						//ループの有無取得
+						fscanf(pFile, "%d", &ver);
+
+						if (ver == 1)
+						{
+							g_player.aMotionInfo[motionType].bLoop = true;
+						}
+						else if (ver == 0)
+						{
+							g_player.aMotionInfo[motionType].bLoop = false;
+						}
+
+						g_player.bLoopMotion = g_player.aMotionInfo[motionType].bLoop;
+
+					}
+					else if (strcmp(aString, "NUM_KEY") == 0)
+					{
+						//最大キーの取得
+						fscanf(pFile, "%d", &g_player.aMotionInfo[motionType].nNumKey);
+
+						g_player.nNumKey = g_player.aMotionInfo[motionType].nNumKey;
+					}
+					else if (strcmp(aString, "KEYSET") == 0)
+					{
+						while (1)
+						{
+							//ファイルを読みこむ
+							fscanf(pFile, "%s", &aString[0]);
+
+							if (strcmp(aString, "FRAME") == 0)
+							{
+								fscanf(pFile, "%d", &g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].nFrame);
+							}
+							else if (strcmp(aString, "KEY") == 0)
+							{
+								//モデルの取得
+								//fscanf(pFile, "%d", &nNummodel);
+								while (1)
+								{
+									//ファイルを読みこむ
+									fscanf(pFile, "%s", &aString[0]);
+									if (strcmp(aString, "POS") == 0)
+									{
+										g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].aKEY[nNummodel].fPosX = 0.0f;
+										g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].aKEY[nNummodel].fPosY = 0.0f;
+										g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].aKEY[nNummodel].fPosZ = 0.0f;
+									}
+									else if (strcmp(aString, "ROT") == 0)
+									{
+										fscanf(pFile, "%f", &g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].aKEY[nNummodel].fRotX);
+										fscanf(pFile, "%f", &g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].aKEY[nNummodel].fRotY);
+										fscanf(pFile, "%f", &g_player.aMotionInfo[motionType].aKeyInfo[nNumKey].aKEY[nNummodel].fRotZ);
+									}
+									else if (strcmp(aString, "END_KEY") == 0)
+									{
+										 nNummodel++;
+										 break;
+									}
+								}
+
+							}										
+							else if (strcmp(aString, "END_KEYSET") == 0)
+							{
+								nNumKey++;
+								break;
+							}
+						}
+					}
+					else if (strcmp(aString, "END_MOTIONSET") == 0)
+					{
+						motionType++;
+						break;
+					}
+				}
+
+			}
+			else if (strcmp(aString, "END_SCRIPT") == 0)
+			{
+				break;
+			}
+		}
+
+		fclose(pFile);
+	}
+	else
+	{
+		return;
+	}
+}
 
 //============================================================
 // プレイヤーの情報取得
