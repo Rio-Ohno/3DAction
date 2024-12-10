@@ -496,9 +496,9 @@ void UpdateEnemy()
 void DrawEnemy()
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	D3DXMATRIX mtxRot, mtxTrans;//計算用マトリックス
-	D3DMATERIAL9 matDef;//現在のマテリアル保存用
-	D3DXMATERIAL* pMat;//マテリアルデータへのポインタ
+	D3DXMATRIX mtxRot, mtxTrans;						//計算用マトリックス
+	D3DMATERIAL9 matDef;								//現在のマテリアル保存用
+	D3DXMATERIAL* pMat;									//マテリアルデータへのポインタ
 
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
@@ -526,7 +526,7 @@ void DrawEnemy()
 			for (int nCntModel = 0; nCntModel < g_enemy[nCntEnemy].nNumModel; nCntModel++)
 			{
 				D3DXMATRIX  mtxRotModel, mtxTransModel;	//計算用マトリックス
-				D3DXMATRIX mtxParent;				//親のマtリックス
+				D3DXMATRIX mtxParent;					//親のマtリックス
 
 				//マテリアルデータへのポインタを取得
 				pMat = (D3DXMATERIAL*)g_enemy[nCntEnemy].aModel[nCntModel].pBuffMat->GetBufferPointer();

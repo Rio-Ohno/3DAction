@@ -179,7 +179,7 @@ void InitPlayer()
 	g_player.nNumKey = 0;
 	g_player.nKey = 0;
 	g_player.nCounterMotion = 0;
-	g_player.nIndxShadow = SetShadow(g_player.pos,g_player.rot,D3DXVECTOR3(1.0f,0.5f,1.0f));
+	g_player.nIndxShadow = SetShadow(g_player.pos,g_player.rot,D3DXVECTOR3(1.0f,0.0f,1.0f));
 	g_player.bjump = false;
 	g_player.bUse = true;
 	g_player.bFrag = false;
@@ -565,6 +565,7 @@ void UpdatePlayer()
 	if (KeyboardTrigger(DIK_RETURN) == true)
 	{
 		g_player.motionType = MOTIONTYPE_ACTION;
+		g_player.nKey = 0;
 	}
 
 	g_player.move.y -= 0.8f;
