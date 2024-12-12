@@ -230,10 +230,10 @@ void DrawBullet()
 			pDevice->SetTransform(D3DTS_WORLD, &g_aBullet[nCnt].mtxWorld);
 
 			//頂点バッファをデバイスのデータストリームに設定
-			pDevice->SetStreamSource(0, g_pVtxBuffBullet, 0, sizeof(VERTEX_3D));
+			pDevice->SetStreamSource(0, g_pVtxBuffBullet, 0, sizeof(VERTEX_2D));
 
 			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_3D);
+			pDevice->SetFVF(FVF_VERTEX_2D);
 
 			//テクスチャ座標の設定
 			pDevice->SetTexture(0, g_pTextureBullet);

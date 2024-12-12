@@ -95,9 +95,9 @@ void UninitEnemy();												//“G‚ÌI—¹ˆ—
 void UpdateEnemy();												//“G‚ÌXVˆ—
 void DrawEnemy();												//“G‚Ì•`‰æˆ—
 void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 rot);				//“G‚Ìİ’èˆ—
-void SetMotionEnemy(MOTIONTYPE_ENEMY type);						//“G‚Ìƒ‚[ƒVƒ‡ƒ“İ’è
+void SetMotionEnemy();											//“G‚Ìƒ‚[ƒVƒ‡ƒ“İ’è
 bool CollisionEnemy();											//“G‚Ì“–‚½‚è”»’è
-void HitEnemy();												//“G‚ª”í’e‚µ‚½‚Æ‚«‚Ìˆ—
+void HitEnemy(int nIndxEnemy);									//“G‚ª”í’e‚µ‚½‚Æ‚«‚Ìˆ—
 Enemy* GetEnemy();												//“G‚Ìî•ñæ“¾
 
 #endif // !_MODEL_H_

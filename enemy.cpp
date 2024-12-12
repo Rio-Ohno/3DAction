@@ -8,6 +8,7 @@
 #include"enemy.h"
 //#include "block.h"
 #include "wall.h"
+#include"bullet.h"
 
 //グロ－バル変数宣言
 Enemy g_enemy[MAX_ENEMY];
@@ -446,10 +447,25 @@ void UpdateEnemy()
 	{
 		if (g_enemy[nCntEnemy].bUse == true)
 		{
+			//行動パターン
+			if (g_enemy[nCntEnemy].motionType == MOTIONTYPE_ENEMY_ESCAPE)
+			{
+				g_enemy[nCntEnemy].nCntFream++;
+
+				if (g_enemy[nCntEnemy].nCntFream == 60)
+				{
+					g_enemy[nCntEnemy].bUse = false;
+					DeleteShadow(g_enemy[nCntEnemy].nIndxShadow);
+				}
+			}
+
+			//posOldの保存
 			g_enemy[nCntEnemy].posOld = g_enemy[nCntEnemy].pos;
 
+			//重力
 			g_enemy[nCntEnemy].move.y -= 0.8f;
 
+			//向きの更新
 			g_enemy[nCntEnemy].rot.y += (g_enemy[nCntEnemy].rotDest.y - g_enemy[nCntEnemy].rot.y) * 0.15f;
 
 			//位置の更新
@@ -485,10 +501,10 @@ void UpdateEnemy()
 			//CollisionBlock_Z();
 			g_enemy[nCntEnemy].bFrag = CollisionWall();
 
-			SetMotionEnemy(g_enemy[nCntEnemy].motionType);
+			//モーション
+			SetMotionEnemy();
 		}
 	}
-
 }
 
 //============================================================
@@ -598,7 +614,7 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 //============================================================
 // 敵のモーション設定・動かし
 //============================================================
-void SetMotionEnemy(MOTIONTYPE_ENEMY type)
+void SetMotionEnemy()
 {
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
@@ -635,6 +651,10 @@ void SetMotionEnemy(MOTIONTYPE_ENEMY type)
 				if (g_enemy[nCntEnemy].nKey >= g_enemy[nCntEnemy].nNumKey)
 				{//キーの最大数より大きくなったら
 					g_enemy[nCntEnemy].nKey = 0;
+				}
+				else if (NextKey >= g_enemy[nCntEnemy].nNumKey)
+				{
+					NextKey = 0;
 				}
 			}
 
@@ -693,42 +713,45 @@ bool CollisionEnemy()
 
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
-		//左右の当たり判定
-		if ((pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
-			(pPlayer->pos.z + (pPlayer->size.z / 2)) > (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z))
+		if (g_enemy[nCntEnemy].motionType != MOTIONTYPE_ENEMY_ESCAPE)
 		{
-			if ((pPlayer->posOld.x + (pPlayer->size.x / 2)) <= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) &&
-				(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
-			{
-				pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) - pPlayer->size.x / 2;
-				bLanding = true;
-			}
-			else if ((pPlayer->posOld.x - (pPlayer->size.x / 2)) >= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
-				(pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x))
-			{
-				pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) + pPlayer->size.x / 2;
-				bLanding = true;
-			}
-		}
-
-		//前後の当たり判定
-		if ((pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
-			(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
-		{
-			if ((pPlayer->posOld.z + (pPlayer->size.z / 2)) <= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) &&
+			//左右の当たり判定
+			if ((pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
 				(pPlayer->pos.z + (pPlayer->size.z / 2)) > (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z))
 			{
-				pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) - pPlayer->size.z / 2;
-				bLanding = true;
+				if ((pPlayer->posOld.x + (pPlayer->size.x / 2)) <= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) &&
+					(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
+				{
+					HitEnemy(nCntEnemy);
+					//pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) - pPlayer->size.x / 2;
+					bLanding = true;
+				}
+				else if ((pPlayer->posOld.x - (pPlayer->size.x / 2)) >= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
+					(pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x))
+				{
+					pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) + pPlayer->size.x / 2;
+					bLanding = true;
+				}
 			}
-			else if ((pPlayer->posOld.z - (pPlayer->size.z / 2)) >= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
-				(pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z))
+
+			//前後の当たり判定
+			if ((pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
+				(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
 			{
-				pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) + pPlayer->size.z / 2;
-				bLanding = true;
+				if ((pPlayer->posOld.z + (pPlayer->size.z / 2)) <= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) &&
+					(pPlayer->pos.z + (pPlayer->size.z / 2)) > (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z))
+				{
+					pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) - pPlayer->size.z / 2;
+					bLanding = true;
+				}
+				else if ((pPlayer->posOld.z - (pPlayer->size.z / 2)) >= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
+					(pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z))
+				{
+					pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) + pPlayer->size.z / 2;
+					bLanding = true;
+				}
 			}
 		}
-
 	}
 	return bLanding;
 }
@@ -739,14 +762,6 @@ bool CollisionEnemy()
 void HitEnemy(int nIndxEnemy)
 {
 	g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
-
-	g_enemy[nIndxEnemy].nCntFream++;
-
-	if (g_enemy[nIndxEnemy].nCntFream == 150)
-	{
-		g_enemy[nIndxEnemy].bUse = false;
-		DeleteShadow(g_enemy[nIndxEnemy].nIndxShadow);
-	}
 }
 
 //============================================================

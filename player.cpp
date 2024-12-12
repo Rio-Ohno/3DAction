@@ -565,6 +565,7 @@ void UpdatePlayer()
 	if (KeyboardTrigger(DIK_RETURN) == true)
 	{
 		g_player.motionType = MOTIONTYPE_ACTION;
+		g_player.move *= -1.0f;
 		g_player.nKey = 0;
 	}
 
