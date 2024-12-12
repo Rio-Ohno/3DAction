@@ -774,13 +774,6 @@ void SetMotion(MOTIONTYPE type)
 		sRot.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotY - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotY;
 		sRot.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotZ - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotZ;
 
-		//sPos.x = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosX - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosX;
-		//sPos.y = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosY - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosY;
-		//sPos.z = g_keyNeutrall[NextKey].aKEY[nCntModel].fPosZ - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosZ;
-
-		//sRot.x = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotX - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotX;
-		//sRot.y = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotY - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotY;
-		//sRot.z = g_keyNeutrall[NextKey].aKEY[nCntModel].fRotZ - g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotZ;
 
 
 		//計算結果格納用
@@ -788,7 +781,6 @@ void SetMotion(MOTIONTYPE type)
 
 		//(モーションカウンター)/(再生フレーム数)
 		float fData = (float)g_player.nCounterMotion / g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].nFrame;
-		//float fData = (float)g_player.nCounterMotion / g_keyNeutrall[g_player.nKey].nFrame;
 
 		fAnsPos.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosX + sPos.x * fData;
 		fAnsPos.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosY + sPos.y * fData;
@@ -797,14 +789,6 @@ void SetMotion(MOTIONTYPE type)
 		fAnsRot.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotX + sRot.x * fData;
 		fAnsRot.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotY + sRot.y * fData;
 		fAnsRot.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotZ + sRot.z * fData;
-
-		//fAnsPos.x = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosX + sPos.x * fData;
-		//fAnsPos.y = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosY + sPos.y * fData;
-		//fAnsPos.z = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fPosZ + sPos.z * fData;
-
-		//fAnsRot.x = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotX + sRot.x * fData;
-		//fAnsRot.y = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotY + sRot.y * fData;
-		//fAnsRot.z = g_keyNeutrall[g_player.nKey].aKEY[nCntModel].fRotZ + sRot.z * fData;
 
 		//位置と向きを反映
 		g_player.aModel[nCntModel].pos += fAnsPos;

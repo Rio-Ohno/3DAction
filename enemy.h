@@ -29,6 +29,7 @@ typedef enum
 	MOTIONTYPE_ENEMY_MOVE,						//移動
 	MOTIONTYPE_ENEMY_ACTION,					//アクション
 	MOTIONTYPE_ENEMY_JUMP,						//ジャンプ
+	MOTIONTYPE_ENEMY_ESCAPE,					//逃げる
 	MOTIONTYPE_ENEMY_MAX
 }MOTIONTYPE_ENEMY;
 
@@ -78,6 +79,7 @@ typedef struct
 	int nNumKey;												//キーの最大数
 	int nKey;													//現在のキーNO.
 	int nCounterMotion;											//モーションカウンター
+	int nCntFream;												//フレームカウンタ
 	int nIndxShadow;											//影のインデックス格納用
 	bool bLoopMotion;											//ループするかどうか
 	bool bjump;													//ジャンプ
@@ -95,6 +97,7 @@ void DrawEnemy();												//敵の描画処理
 void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 rot);				//敵の設定処理
 void SetMotionEnemy(MOTIONTYPE_ENEMY type);						//敵のモーション設定
 bool CollisionEnemy();											//敵の当たり判定
+void HitEnemy();												//敵が被弾したときの処理
 Enemy* GetEnemy();												//敵の情報取得
 
 #endif // !_MODEL_H_

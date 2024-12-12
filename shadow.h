@@ -31,6 +31,7 @@ void UpdateShadow();													//‰e‚ÌXVˆ—
 void DrawShadow();														//‰e‚Ì•`‰æˆ—
 int SetShadow(D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scale);		//‰e‚Ìİ’èˆ—
 void SetPositionShadow(int nIndxShadow, D3DXVECTOR3 pos);				//‰e‚ÌˆÊ’uİ’èˆ—
+void DeleteShadow(int nIndx);											//‰e‚ğÁ‚·ˆ—
 
 #endif // !_Shadow_H_
 #pragma once

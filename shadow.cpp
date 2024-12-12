@@ -208,3 +208,11 @@ void SetPositionShadow(int nIndxShadow, D3DXVECTOR3 pos)
 {
 	g_aShadow[nIndxShadow].pos = pos;
 }
+
+//============================================================
+//âeÇè¡Ç∑èàóù
+//============================================================
+void DeleteShadow(int nIndx)
+{
+	g_aShadow[nIndx].bUse = false;
+}

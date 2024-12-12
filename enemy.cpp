@@ -107,6 +107,7 @@ void InitEnemy()
 		g_enemy[nCntEnemy].nNumKey = 0;
 		g_enemy[nCntEnemy].nKey = 1;
 		g_enemy[nCntEnemy].nCounterMotion = 0;
+		g_enemy[nCntEnemy].nCntFream = 0;
 		g_enemy[nCntEnemy].nIndxShadow = SetShadow(g_enemy[nCntEnemy].pos, g_enemy[nCntEnemy].rot, D3DXVECTOR3(1.0f, 0.5f, 1.0f));
 		g_enemy[nCntEnemy].bjump = false;
 		g_enemy[nCntEnemy].bUse = true;
@@ -619,6 +620,8 @@ void SetMotionEnemy(MOTIONTYPE_ENEMY type)
 		case MOTIONTYPE_ENEMY_JUMP:
 			break;
 
+		case MOTIONTYPE_ENEMY_ESCAPE:
+			break;
 		}
 
 		//全モデル(パーツ)の更新
@@ -728,6 +731,22 @@ bool CollisionEnemy()
 
 	}
 	return bLanding;
+}
+
+//============================================================
+// 敵が被弾したときの処理
+//============================================================
+void HitEnemy(int nIndxEnemy)
+{
+	g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
+
+	g_enemy[nIndxEnemy].nCntFream++;
+
+	if (g_enemy[nIndxEnemy].nCntFream == 150)
+	{
+		g_enemy[nIndxEnemy].bUse = false;
+		DeleteShadow(g_enemy[nIndxEnemy].nIndxShadow);
+	}
 }
 
 //============================================================
