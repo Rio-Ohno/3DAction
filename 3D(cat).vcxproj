@@ -146,7 +146,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Project2\wave.cpp" />
-    <ClCompile Include="backgraund.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="effect.cpp" />
@@ -169,7 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Project2\wave.h" />
-    <ClInclude Include="backgraund.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="effect.h" />

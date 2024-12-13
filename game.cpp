@@ -20,6 +20,7 @@
 #include"shadow.h"
 #include"input.h"
 #include"enemy.h"
+#include "effect.h"
 
 //グローバル変数
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -41,6 +42,9 @@ void InitGame()
 
 	//爆発の初期化処理
 	InitExplosion();
+
+	//エフェクトの初期化処理
+	InitEffect();
 
 	//影の初期化処理
 	InitShadow();
@@ -126,14 +130,16 @@ void UninitGame()
 	////スコアの終了処理
 	//UninitScore();
 
-
 	//UninitModel();
-
-	//影の初期化処理
-	UninitShadow();
 
 	//爆発の初期化処理
 	UninitExplosion();
+
+	//エフェクトの終了処理
+	UninitEffect();
+
+	//影の初期化処理
+	UninitShadow();
 
 	//弾の終了処理
 	UninitBullet();
@@ -198,7 +204,6 @@ void UpdateGame()
 
 		if (g_bPause == false)
 		{
-
 			//弾の更新処理
 			UpdateBullet();
 
@@ -208,8 +213,8 @@ void UpdateGame()
 			//爆発の更新処理
 			UpdateExplosion();
 
-			//弾の更新処理
-			UpdateBullet();
+			//エフェクトの更新処理
+			UpdateEffect();
 
 			//ブロックの更新処理
 			//UpdateBlock();
@@ -331,6 +336,9 @@ void DrawGame()
 
 	//爆発の描画処理
 	DrawExplosion();
+
+	//エフェクトの描画処理
+	DrawEffect();
 
 	//弾の描画処理
 	DrawBullet();

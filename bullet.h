@@ -36,7 +36,6 @@ typedef struct
 	int nIndexShadow;												//影のインデックス
 	float radius;													//半径
 	int nLife;														//寿命
-	bool ver;														//当たったかどうか
 	bool bUse;														//使用しているかどうか
 }Bullet;
 
@@ -46,7 +45,7 @@ void UninitBullet();												//終了処理
 void UpdateBullet();												//更新処理
 void DrawBullet();													//描画処理
 void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 dir, float radius);		//設定処理
-bool CollisionBullet();												//弾との当たり判定
+bool CollisionBullet(int Index);												//弾との当たり判定
 Bullet* GetBullet();												//情報渡す
 
 #endif // !_Bullet_H_

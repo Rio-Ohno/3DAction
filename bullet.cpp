@@ -39,6 +39,8 @@ void InitBullet()
 	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
 	{
 		g_aBullet[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_aBullet[nCnt].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		g_aBullet[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aBullet[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aBullet[nCnt].dir = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aBullet[nCnt].nIndexShadow = 0;
@@ -125,6 +127,16 @@ void UpdateBullet()
 
 			float rot = g_aBullet[nCnt].dir.y + D3DX_PI;
 
+			//目標の移動方向（角度）の補正
+			if (rot > D3DX_PI)
+			{
+				rot -= D3DX_PI * 2.0f;
+			}
+			else if (g_aBullet[nCnt].dir.y + D3DX_PI < -D3DX_PI)
+			{
+				rot += D3DX_PI * 2.0f;
+			}
+
 			//移動量更新
 			g_aBullet[nCnt].move.x = sinf(rot) * BULLET_SPEED;
 			g_aBullet[nCnt].move.y = g_aBullet[nCnt].pos.y;
@@ -138,17 +150,11 @@ void UpdateBullet()
 				SetExplosion(g_aBullet[nCnt].pos, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.7f), g_aBullet[nCnt].rot, g_aBullet[nCnt].radius);
 			}
 
-			//目標の移動方向（角度）の補正
-			if (rot > D3DX_PI)
+			if ((CollisionBullet(nCnt)) == true)
 			{
-				rot -= D3DX_PI * 2.0f;
+				g_aBullet[nCnt].bUse = false;
+				DeleteShadow(g_aBullet[nCnt].nIndexShadow);
 			}
-			else if (g_aBullet[nCnt].dir.y + D3DX_PI < -D3DX_PI)
-			{
-				rot += D3DX_PI * 2.0f;
-			}
-
-			CollisionBullet();
 
 			//位置の更新
 			g_aBullet[nCnt].pos += g_aBullet[nCnt].move;
@@ -230,10 +236,10 @@ void DrawBullet()
 			pDevice->SetTransform(D3DTS_WORLD, &g_aBullet[nCnt].mtxWorld);
 
 			//頂点バッファをデバイスのデータストリームに設定
-			pDevice->SetStreamSource(0, g_pVtxBuffBullet, 0, sizeof(VERTEX_2D));
+			pDevice->SetStreamSource(0, g_pVtxBuffBullet, 0, sizeof(VERTEX_3D));
 
 			//頂点フォーマットの設定
-			pDevice->SetFVF(FVF_VERTEX_2D);
+			pDevice->SetFVF(FVF_VERTEX_3D);
 
 			//テクスチャ座標の設定
 			pDevice->SetTexture(0, g_pTextureBullet);
@@ -308,43 +314,50 @@ Bullet* GetBullet()
 //============================================================
 // 弾の当たり判定
 //============================================================
-bool CollisionBullet()		
+bool CollisionBullet(int Index)		
 {
+	//壁の情報取得
+	Wall* pWall = GetWall();
 
-	for (int nCnt = 0; nCnt < MAX_BULLET; nCnt++)
-	{
-		if (g_aBullet[nCnt].bUse == true)
+	bool ver = false;
+
+		if (g_aBullet[Index].bUse == true)
 		{	
-			//++++++++++++++++
-			//壁との当たり判定
-			//++++++++++++++++
-			
-			//壁の情報取得
-			Wall* pWall = GetWall();
-
-			D3DXVECTOR3 vecLine = pWall->vecWall;//vecLine格納
-			D3DXVECTOR3 vecMove = g_aBullet[nCnt].move - pWall->aPos[0];
-
-			//計算結果格納用
-			D3DXVECTOR3 vecNor = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
-			//外積
-			D3DXVec3Cross(&vecNor, &pWall->vecWall, &vecMove);
-
-			if (vecNor.y < 0)
+			for (int nCntWall = 0; nCntWall < MAX_WALL; nCntWall++)
 			{
-				//法線の正規化
-				D3DXVec3Normalize(&vecNor, &vecNor);
+				if (pWall[nCntWall].bUse == true)
+				{
+					//++++++++++++++++
+					//壁との当たり判定
+					//++++++++++++++++
 
-				SetExplosion(g_aBullet[nCnt].posOld, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.7f), g_aBullet[nCnt].rot, g_aBullet[nCnt].radius * 0.9f);
-				vecNor *= -1;
 
-				//内積
-				float fvec = (vecMove.x * vecNor.x) + (vecMove.z * vecNor.z);
+					D3DXVECTOR3 vecLine = pWall[nCntWall].vecWall;//vecLine格納
+					D3DXVECTOR3 vecMove = g_aBullet[Index].pos - pWall[nCntWall].aPos[0];
 
-				//float vecC = vecNor * fvec;
+					//計算結果格納用
+					D3DXVECTOR3 vecNor = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+					//外積
+					D3DXVec3Cross(&vecNor, &pWall[nCntWall].vecWall, &vecMove);
+
+					if (vecNor.y < 0)
+					{
+						//法線の正規化
+						D3DXVec3Normalize(&vecNor, &vecNor);
+
+						SetExplosion(g_aBullet[Index].posOld, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.7f), g_aBullet[Index].rot, g_aBullet[Index].radius * 0.9f);
+						vecNor *= -1;
+
+						//内積
+						float fvec = (vecMove.x * vecNor.x) + (vecMove.z * vecNor.z);
+
+						//float vecC = vecNor * fvec;
+
+						ver = true;
+					}
+				}
 			}
 		}
-	}
-	return g_aBullet[0].ver;
+	return ver;
 }

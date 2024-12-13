@@ -7,9 +7,9 @@
 
 #include"player.h"
 #include "bullet.h"
-//#include "block.h"
 #include "wall.h"
 #include"enemy.h"
+#include"effect.h"
 #include<stdio.h>
 #include<string.h>
 
@@ -179,7 +179,7 @@ void InitPlayer()
 	g_player.nNumKey = 0;
 	g_player.nKey = 0;
 	g_player.nCounterMotion = 0;
-	g_player.nIndxShadow = SetShadow(g_player.pos,g_player.rot,D3DXVECTOR3(1.0f,0.0f,1.0f));
+	g_player.nIndxShadow = SetShadow(D3DXVECTOR3(g_player.pos.x, 0.1f, g_player.pos.z),g_player.rot,D3DXVECTOR3(1.0f,0.0f,1.0f));
 	g_player.bjump = false;
 	g_player.bUse = true;
 	g_player.bFrag = false;
@@ -463,7 +463,6 @@ void InitPlayer()
 				D3DXCreateTextureFromFile(pDevice,
 					pMat[nCnt].pTextureFilename,
 					&g_player.aModel[nCntModel].apTextureModel[nCnt]);
-
 			}
 		}
 	}
@@ -565,6 +564,7 @@ void UpdatePlayer()
 	if (KeyboardTrigger(DIK_RETURN) == true)
 	{
 		g_player.motionType = MOTIONTYPE_ACTION;
+		SetBullet(g_player.pos, g_player.rot, 2.0f);
 		g_player.move *= -1.0f;
 		g_player.nKey = 0;
 	}
@@ -775,17 +775,15 @@ void SetMotion(MOTIONTYPE type)
 		sRot.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotY - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotY;
 		sRot.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[NextKey].aKEY[nCntModel].fRotZ - g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotZ;
 
-
-
 		//計算結果格納用
 		D3DXVECTOR3 fAnsPos, fAnsRot;
 
 		//(モーションカウンター)/(再生フレーム数)
 		float fData = (float)g_player.nCounterMotion / g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].nFrame;
 
-		fAnsPos.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosX + sPos.x * fData;
-		fAnsPos.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosY + sPos.y * fData;
-		fAnsPos.z = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fPosZ + sPos.z * fData;
+		fAnsPos.x = sPos.x * fData;
+		fAnsPos.y = sPos.y * fData;
+		fAnsPos.z = sPos.z * fData;
 
 		fAnsRot.x = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotX + sRot.x * fData;
 		fAnsRot.y = g_player.aMotionInfo[g_player.motionType].aKeyInfo[g_player.nKey].aKEY[nCntModel].fRotY + sRot.y * fData;
