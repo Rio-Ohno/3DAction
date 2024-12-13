@@ -387,8 +387,8 @@ void InitPlayer()
 	g_player.aModel[14].pos = D3DXVECTOR3(0.0f, -5.0f, 0.0f);
 	g_player.aModel[14].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	//外部からモーション読込
-	LoadMotionPlayer();
+	////外部からモーション読込
+	//LoadMotionPlayer();
 
 	for (int nCntModel = 0; nCntModel < g_player.nNumModel; nCntModel++)
 	{
@@ -564,7 +564,7 @@ void UpdatePlayer()
 	if (KeyboardTrigger(DIK_RETURN) == true)
 	{
 		g_player.motionType = MOTIONTYPE_ATTACK;
-		SetBullet(g_player.pos, g_player.rot, 2.0f);
+		//SetBullet(g_player.pos, g_player.rot, 2.0f);
 		g_player.move *= -1.0f;
 		g_player.nKey = 0;
 	}

@@ -148,6 +148,7 @@ void UpdateBullet()
 			{
 				g_aBullet[nCnt].bUse = false;
 				SetExplosion(g_aBullet[nCnt].pos, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.7f), g_aBullet[nCnt].rot, g_aBullet[nCnt].radius);
+				DeleteShadow(g_aBullet[nCnt].nIndexShadow);
 			}
 
 			if ((CollisionBullet(nCnt)) == true)
