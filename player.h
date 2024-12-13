@@ -26,7 +26,7 @@ typedef enum
 {
 	MOTIONTYPE_NEUTRAL=0,				//ニュートラル
 	MOTIONTYPE_MOVE,					//移動
-	MOTIONTYPE_ACTION,					//アクション
+	MOTIONTYPE_ATTACK,					//アクション
 	MOTIONTYPE_JUMP,					//ジャンプ
 	MOTIONTYPE_MAX
 }MOTIONTYPE;

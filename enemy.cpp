@@ -646,7 +646,7 @@ void SetMotionEnemy()
 		case MOTIONTYPE_ENEMY_MOVE:
 			break;
 
-		case MOTIONTYPE_ENEMY_ACTION:
+		case MOTIONTYPE_ENEMY_ATTACK:
 			break;
 
 		case MOTIONTYPE_ENEMY_JUMP:

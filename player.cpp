@@ -85,7 +85,7 @@ static  Key_Info g_keyNeutrall[] =
 	}}
 };
 
-static  Key_Info g_keyAction[] =
+static  Key_Info g_keyAttack[] =
 {
 	   {20,
 	   //ÉpÅ[Éc0
@@ -563,7 +563,7 @@ void UpdatePlayer()
 	//çUåÇ
 	if (KeyboardTrigger(DIK_RETURN) == true)
 	{
-		g_player.motionType = MOTIONTYPE_ACTION;
+		g_player.motionType = MOTIONTYPE_ATTACK;
 		SetBullet(g_player.pos, g_player.rot, 2.0f);
 		g_player.move *= -1.0f;
 		g_player.nKey = 0;
@@ -731,14 +731,14 @@ void SetMotion(MOTIONTYPE type)
 
 		break;
 
-	case MOTIONTYPE_ACTION:
+	case MOTIONTYPE_ATTACK:
 
 		g_player.nNumKey = 2;
 		g_player.bLoopMotion = false;
 
 		for (int nCnt = 0; nCnt < g_player.nNumKey; nCnt++)
 		{
-			g_player.aMotionInfo[g_player.motionType].aKeyInfo[nCnt] = g_keyAction[nCnt];
+			g_player.aMotionInfo[g_player.motionType].aKeyInfo[nCnt] = g_keyAttack[nCnt];
 		}
 
 		break;
