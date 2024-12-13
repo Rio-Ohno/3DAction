@@ -158,6 +158,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="meshcylinder.cpp" />
     <ClCompile Include="meshfield.cpp" />
+    <ClCompile Include="object.cpp" />
     <ClCompile Include="pause.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="result.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="meshcylinder.h" />
     <ClInclude Include="meshfield.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="pause.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="result.h" />

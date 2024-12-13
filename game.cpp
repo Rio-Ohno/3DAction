@@ -83,10 +83,10 @@ void InitGame()
 	InitWall();
 
 	//壁の設定処理(pos,rot,width,hight,a)
-	//SetWall(D3DXVECTOR3(-100.0f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI / 2.0f, 0.0f), 200.0f, 100.0f, 0.7f);//左
-	//SetWall(D3DXVECTOR3(100.0f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI / 2.0f, 0.0f), 200.0f, 100.0f, 0.7f);//右
-	SetWall(D3DXVECTOR3(0.0f, 50.0f, 100.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 200.0f, 100.0f, 0.7f);//奥
-	SetWall(D3DXVECTOR3(0.0f, 50.0f, -100.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -200.0f, 100.0f, 0.7f);//手前
+	SetWall(D3DXVECTOR3(-300.0f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI / 2.0f, 0.0f), 600.0f, 100.0f, 0.7f);//左
+	SetWall(D3DXVECTOR3(300.0f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI / 2.0f, 0.0f), 600.0f, 100.0f, 0.7f);//右
+	SetWall(D3DXVECTOR3(0.0f, 50.0f, 300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 600.0f, 100.0f, 0.7f);//奥
+	SetWall(D3DXVECTOR3(0.0f, 50.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), -600.0f, 100.0f, 0.7f);//手前
 
 	//SetWall(D3DXVECTOR3(-100.1f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, D3DX_PI / 2.0f, 0.0f), 200.0f, 100.0f, 0.3f);//左裏
 	//SetWall(D3DXVECTOR3(100.1f, 50.0f, 0.0f), D3DXVECTOR3(0.0f, -D3DX_PI / 2.0f, 0.0f), 200.0f, 100.0f, 0.3f);//右裏

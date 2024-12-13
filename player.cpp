@@ -387,8 +387,8 @@ void InitPlayer()
 	g_player.aModel[14].pos = D3DXVECTOR3(0.0f, -5.0f, 0.0f);
 	g_player.aModel[14].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	////外部からモーション読込
-	//LoadMotionPlayer();
+	//外部からモーション読込
+	LoadMotionPlayer();
 
 	for (int nCntModel = 0; nCntModel < g_player.nNumModel; nCntModel++)
 	{
@@ -571,7 +571,27 @@ void UpdatePlayer()
 
 	g_player.move.y -= 0.8f;
 
+	//目標の移動方向（角度）の補正
+	if (g_player.rotDest.y > D3DX_PI)
+	{
+		g_player.rotDest.y -= D3DX_PI * 2.0f;
+	}
+	else if (g_player.rotDest.y < -D3DX_PI)
+	{
+		g_player.rotDest.y += D3DX_PI * 2.0f;
+	}
+
 	g_player.rot.y += (g_player.rotDest.y - g_player.rot.y) * 0.15f;
+
+	//目標の移動方向（角度）の補正
+	if (g_player.rot.y > D3DX_PI)
+	{
+		g_player.rot.y -= D3DX_PI * 2.0f;
+	}
+	else if (g_player.rot.y < -D3DX_PI)
+	{
+		g_player.rot.y += D3DX_PI * 2.0f;
+	}
 
 	//位置の更新
 	g_player.pos += g_player.move;
@@ -590,16 +610,6 @@ void UpdatePlayer()
 
 	//影の位置更新
 	SetPositionShadow(g_player.nIndxShadow, D3DXVECTOR3(g_player.pos.x,0.1f,g_player.pos.z));
-
-	//目標の移動方向（角度）の補正
-	if (g_player.rot.y > D3DX_PI)
-	{	  
-		g_player.rot.y -= D3DX_PI * 2.0f;
-	}
-	else if (g_player.rot.y < -D3DX_PI)
-	{
-		g_player.rot.y += D3DX_PI * 2.0f;
-	}
 
 	//当たり判定
 	//CollisionBlock_X();

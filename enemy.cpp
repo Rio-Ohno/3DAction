@@ -94,7 +94,7 @@ void InitEnemy()
 	for (nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		//各種初期化
-		g_enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 50.0f);
+		g_enemy[nCntEnemy].pos = D3DXVECTOR3(50.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -443,6 +443,9 @@ void UpdateEnemy()
 	//カメラの情報取得
 	Camera* pCamera = GetCamera();
 
+	//プレイヤーの情報取得
+	Player* pPlayer = GetPlayer();
+
 	for (int nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		if (g_enemy[nCntEnemy].bUse == true)
@@ -450,6 +453,9 @@ void UpdateEnemy()
 			//行動パターン
 			if (g_enemy[nCntEnemy].motionType == MOTIONTYPE_ENEMY_ESCAPE)
 			{
+				g_enemy[nCntEnemy].move.x = -sinf(g_enemy[nCntEnemy].rot.y) * 2.0f;
+				g_enemy[nCntEnemy].move.z = -cosf(g_enemy[nCntEnemy].rot.y) * 2.0f;
+
 				g_enemy[nCntEnemy].nCntFream++;
 
 				if (g_enemy[nCntEnemy].nCntFream == 60)
@@ -465,8 +471,28 @@ void UpdateEnemy()
 			//重力
 			g_enemy[nCntEnemy].move.y -= 0.8f;
 
+			//目標の移動方向（角度）の補正
+			if (g_enemy[nCntEnemy].rotDest.y > D3DX_PI)
+			{
+				g_enemy[nCntEnemy].rotDest.y -= D3DX_PI * 2.0f;
+			}
+			else if (g_enemy[nCntEnemy].rotDest.y < -D3DX_PI)
+			{
+				g_enemy[nCntEnemy].rotDest.y += D3DX_PI * 2.0f;
+			}
+
 			//向きの更新
 			g_enemy[nCntEnemy].rot.y += (g_enemy[nCntEnemy].rotDest.y - g_enemy[nCntEnemy].rot.y) * 0.15f;
+
+			//目標の移動方向（角度）の補正
+			if (g_enemy[nCntEnemy].rot.y > D3DX_PI)
+			{
+				g_enemy[nCntEnemy].rot.y -= D3DX_PI * 2.0f;
+			}
+			else if (g_enemy[nCntEnemy].rot.y < -D3DX_PI)
+			{
+				g_enemy[nCntEnemy].rot.y += D3DX_PI * 2.0f;
+			}
 
 			//位置の更新
 			g_enemy[nCntEnemy].pos += g_enemy[nCntEnemy].move;
@@ -485,16 +511,6 @@ void UpdateEnemy()
 
 			//影の位置更新
 			SetPositionShadow(g_enemy[nCntEnemy].nIndxShadow, g_enemy[nCntEnemy].pos);
-
-			//目標の移動方向（角度）の補正
-			if (g_enemy[nCntEnemy].rot.y > D3DX_PI)
-			{
-				g_enemy[nCntEnemy].rot.y -= D3DX_PI * 2.0f;
-			}
-			else if (g_enemy[nCntEnemy].rot.y < -D3DX_PI)
-			{
-				g_enemy[nCntEnemy].rot.y += D3DX_PI * 2.0f;
-			}
 
 			//当たり判定
 			//CollisionBlock_X();
@@ -723,13 +739,12 @@ bool CollisionEnemy()
 					(pPlayer->pos.x + (pPlayer->size.x / 2)) > (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x))
 				{
 					HitEnemy(nCntEnemy);
-					//pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMin.x) - pPlayer->size.x / 2;
 					bLanding = true;
 				}
 				else if ((pPlayer->posOld.x - (pPlayer->size.x / 2)) >= (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) &&
 					(pPlayer->pos.x - (pPlayer->size.x / 2)) < (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x))
 				{
-					pPlayer->pos.x = (g_enemy[nCntEnemy].pos.x + g_enemy[nCntEnemy].vtxMax.x) + pPlayer->size.x / 2;
+					HitEnemy(nCntEnemy);
 					bLanding = true;
 				}
 			}
@@ -741,13 +756,13 @@ bool CollisionEnemy()
 				if ((pPlayer->posOld.z + (pPlayer->size.z / 2)) <= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) &&
 					(pPlayer->pos.z + (pPlayer->size.z / 2)) > (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z))
 				{
-					pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMin.z) - pPlayer->size.z / 2;
+					HitEnemy(nCntEnemy);
 					bLanding = true;
 				}
 				else if ((pPlayer->posOld.z - (pPlayer->size.z / 2)) >= (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) &&
 					(pPlayer->pos.z - (pPlayer->size.z / 2)) < (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z))
 				{
-					pPlayer->pos.z = (g_enemy[nCntEnemy].pos.z + g_enemy[nCntEnemy].vtxMax.z) + pPlayer->size.z / 2;
+					HitEnemy(nCntEnemy);
 					bLanding = true;
 				}
 			}
@@ -761,7 +776,12 @@ bool CollisionEnemy()
 //============================================================
 void HitEnemy(int nIndxEnemy)
 {
+	//プレイヤーの情報取得
+	Player* pPlayer = GetPlayer();
+
 	g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
+	g_enemy[nIndxEnemy].rotDest.y = pPlayer->rot.y;
+	g_enemy[nIndxEnemy].rot.y = pPlayer->rot.y;
 }
 
 //============================================================

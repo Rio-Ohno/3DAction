@@ -44,8 +44,8 @@ void InitMeshField()
 
 		g_aMeshField.pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_aMeshField.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_aMeshField.fHight = 200.0f;
-		g_aMeshField.fWidth = 200.0f;
+		g_aMeshField.fHight = 300.0f;
+		g_aMeshField.fWidth = 300.0f;
 
 	//頂点情報へのポインタ
 	VERTEX_3D* pVtx = NULL;
