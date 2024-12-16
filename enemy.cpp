@@ -9,6 +9,7 @@
 //#include "block.h"
 #include "wall.h"
 #include"bullet.h"
+#include"Item.h"
 
 //グロ－バル変数宣言
 Enemy g_enemy[MAX_ENEMY];
@@ -103,6 +104,7 @@ void InitEnemy()
 		g_enemy[nCntEnemy].size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].motionType = MOTIONTYPE_ENEMY_NEUTRAL;
+		g_enemy[nCntEnemy].nLife = 1;
 		g_enemy[nCntEnemy].nNumModel = 0;
 		g_enemy[nCntEnemy].nNumMotion = 0;
 		g_enemy[nCntEnemy].nNumKey = 0;
@@ -779,9 +781,20 @@ void HitEnemy(int nIndxEnemy)
 	//プレイヤーの情報取得
 	Player* pPlayer = GetPlayer();
 
-	g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
-	g_enemy[nIndxEnemy].rotDest.y = pPlayer->rot.y;
-	g_enemy[nIndxEnemy].rot.y = pPlayer->rot.y;
+	if (g_enemy[nIndxEnemy].nLife > 0)
+	{
+		g_enemy[nIndxEnemy].nLife--;
+	}
+	else if (g_enemy[nIndxEnemy].nLife <= 0)
+	{
+		g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
+		g_enemy[nIndxEnemy].rotDest.y = pPlayer->rot.y;
+		g_enemy[nIndxEnemy].rot.y = pPlayer->rot.y;
+
+		//アイテムドロップ
+		int nType = rand() % 12;											//ドロップ率:25%	種類:33% (偏りなし)
+		SetItem(g_enemy[nIndxEnemy].pos, nType);
+	}
 }
 
 //============================================================

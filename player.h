@@ -78,6 +78,8 @@ typedef struct
 	int nKey;							//現在のキーNO.
 	int nCounterMotion;					//モーションカウンター
 	int nIndxShadow;					//影のインデックス格納用
+	int nCntItem;						//所持アイテム数
+	int nCntQ;							//キュウリ所持数
 	bool bLoopMotion;					//ループするかどうか
 	bool bjump;							//ジャンプ
 	bool bUse;							//使用しているかどうか

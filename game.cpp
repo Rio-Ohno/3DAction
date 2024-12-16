@@ -21,6 +21,8 @@
 #include"input.h"
 #include"enemy.h"
 #include "effect.h"
+#include<time.h>
+#include "Item.h"
 
 //グローバル変数
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -36,6 +38,7 @@ void InitGame()
 	g_gameState = GAMESTATE_NORMAL;
 	g_bPause = false;
 	g_nCounterGameStat = 0;
+	srand((int)time(0));//シード値
 
 	//ポーズの初期化処理
 	InitPause();
@@ -51,6 +54,9 @@ void InitGame()
 
 	//弾の初期化処理
 	InitBullet();
+
+	//アイテムの初期化処理
+	InitItem();
 
 	//プレイヤーの初期化処理
 	InitPlayer();
@@ -143,6 +149,9 @@ void UninitGame()
 
 	//弾の終了処理
 	UninitBullet();
+
+	//アイテムの終了処理
+	UninitItem();
 	
 	//プレイヤーの終了処理
 	UninitPlayer();
@@ -206,6 +215,9 @@ void UpdateGame()
 		{
 			//弾の更新処理
 			UpdateBullet();
+
+			//アイテムの更新処理
+			UpdateItem();
 
 			//影の更新処理
 			UpdateShadow();
@@ -342,6 +354,10 @@ void DrawGame()
 
 	//弾の描画処理
 	DrawBullet();
+
+	///アイテムの描画処理
+	DrawItemModel();
+	DrawItemBillboard();
 
 	//ブロックの描画処理
 	//DrawBlock();

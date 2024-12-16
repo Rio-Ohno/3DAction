@@ -74,6 +74,7 @@ typedef struct
 	Model aModel[MAX_PARTS];									//モデル(パーツ)
 	Motion_ENEMY_Info aMotionInfo[MOTIONTYPE_ENEMY_MAX];		//モーション情報
 	MOTIONTYPE_ENEMY motionType;								//モーションの種類
+	int nLife;													//体力
 	int nNumModel;												//モデル(パーツ)の総数
 	int nNumMotion;												//モーションの最大数
 	int nNumKey;												//キーの最大数

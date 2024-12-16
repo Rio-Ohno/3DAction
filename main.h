@@ -8,7 +8,6 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-
 #include<windows.h>
 #include"d3dx9.h"
 #define DIRECTINPUT_VERSION (0x0800)        //ビルド時の警告対処用マクロ

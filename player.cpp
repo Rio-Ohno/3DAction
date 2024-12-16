@@ -179,6 +179,8 @@ void InitPlayer()
 	g_player.nNumKey = 0;
 	g_player.nKey = 0;
 	g_player.nCounterMotion = 0;
+	g_player.nCntItem = 0;
+	g_player.nCntQ = 5;
 	g_player.nIndxShadow = SetShadow(D3DXVECTOR3(g_player.pos.x, 0.1f, g_player.pos.z),g_player.rot,D3DXVECTOR3(1.0f,0.0f,1.0f));
 	g_player.bjump = false;
 	g_player.bUse = true;
@@ -565,10 +567,15 @@ void UpdatePlayer()
 	{
 		g_player.motionType = MOTIONTYPE_ATTACK;
 		//SetBullet(g_player.pos, g_player.rot, 2.0f);
-		g_player.move *= -1.0f;
 		g_player.nKey = 0;
 	}
 
+	if (g_player.motionType == MOTIONTYPE_ATTACK)
+	{
+		g_player.move *= -0.1f;
+	}
+
+	//重力
 	g_player.move.y -= 0.8f;
 
 	//目標の移動方向（角度）の補正
@@ -617,8 +624,8 @@ void UpdatePlayer()
 	g_player.bFrag = CollisionWall();
 	bool bCollEnemy = CollisionEnemy();
   
+	//モーション
 	SetMotion(g_player.motionType);
-
 }
 
 //============================================================
