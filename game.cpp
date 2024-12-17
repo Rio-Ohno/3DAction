@@ -6,7 +6,6 @@
 //============================================================
 
 #include"game.h"
-//#include"backgraund.h"
 #include"player.h"
 #include"bullet.h"
 #include"explosion.h"
@@ -64,13 +63,10 @@ void InitGame()
 	//敵の初期化処理
 	InitEnemy();
 
-	//InitBlock();
-
 	//InitPolygon();
 	
 	//メッシュフィールドの初期化処理
 	InitMeshField();
-	//InitModel();
 
 	//InitBillboard();
 
@@ -103,14 +99,8 @@ void InitGame()
 
 	InitLight();
 
-	////敵の初期化
-	//InitEnemy();
-
 	////ウェーブの初期化
 	//InitWave();
-
-	////SetEnemy(D3DXVECTOR3(300.0f, 300.0f, 0.0f), 0, 2);
-	//SetEnemy(D3DXVECTOR3(640.0f, 100.0f, 0.0f), 2, 2);
 
 	////スコアの初期化
 	//InitScore();
@@ -159,14 +149,10 @@ void UninitGame()
 	//敵の終了処理
 	UninitEnemy();
 
-	//UninitBlock();
-
 	//UninitPolygon();
 
 	//メッシュフィールドの終了処理
 	UninitMeshField();
-
-	//UninitBillboard();
 
 	//UninitMeshWall();
 
@@ -228,15 +214,10 @@ void UpdateGame()
 			//エフェクトの更新処理
 			UpdateEffect();
 
-			//ブロックの更新処理
-			//UpdateBlock();
-
 			//UpdatePolygon();
 
 			//メッシュフィールドの更新処理
 			UpdateMeshField();
-
-			//UpdateBillboard();
 
 			//UpdateMeshWall();
 
@@ -304,11 +285,11 @@ void UpdateGame()
 		//プレイヤーの情報取得
 		Player* pPlayer = GetPlayer();
 
-		//if (pPlayer->bFrag == true)
-		//{
-		//	//画面遷移(Resultへ)
-		//	SetFade(MODE_RESULT);
-		//}
+		if (pPlayer->bFrag == true)
+		{
+			//画面遷移(Resultへ)
+			SetFade(MODE_RESULT);
+		}
 			
 	//switch (g_gameState)
 	//{
@@ -355,12 +336,9 @@ void DrawGame()
 	//弾の描画処理
 	DrawBullet();
 
-	///アイテムの描画処理
+	//アイテムの描画処理
 	DrawItemModel();
 	DrawItemBillboard();
-
-	//ブロックの描画処理
-	//DrawBlock();
 
 	//ポリゴンの描画処理
 	//DrawPolygon();
@@ -388,9 +366,6 @@ void DrawGame()
 	DrawWall();
 
 	//DrawModel();
-
-	////敵の描画処理
-	//DrawEnemy();
 
 	////スコアの描画処理
 	//DrawScore();

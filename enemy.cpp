@@ -465,6 +465,12 @@ void UpdateEnemy()
 					g_enemy[nCntEnemy].bUse = false;
 					DeleteShadow(g_enemy[nCntEnemy].nIndxShadow);
 				}
+				else if(g_enemy[nCntEnemy].nCntFream==30)
+				{
+					//アイテムドロップ
+					int nType = rand() % 12;											//ドロップ率:25%	種類:33% (偏りなし)
+					SetItem(g_enemy[nCntEnemy].pos, 1);
+				}
 			}
 
 			//posOldの保存
@@ -790,10 +796,6 @@ void HitEnemy(int nIndxEnemy)
 		g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
 		g_enemy[nIndxEnemy].rotDest.y = pPlayer->rot.y;
 		g_enemy[nIndxEnemy].rot.y = pPlayer->rot.y;
-
-		//アイテムドロップ
-		int nType = rand() % 12;											//ドロップ率:25%	種類:33% (偏りなし)
-		SetItem(g_enemy[nIndxEnemy].pos, nType);
 	}
 }
 

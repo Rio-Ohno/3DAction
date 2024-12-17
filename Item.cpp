@@ -11,7 +11,7 @@
 //グロ－バル変数宣言
 Item g_Item[MAX_ITEM];
 LPDIRECT3DVERTEXBUFFER9 g_pVtxBuffItemBill = NULL;						//頂点バッファへのポインタ
-LPDIRECT3DTEXTURE9 g_pTextureItemBill = NULL;							//テクスチャへのポインタ
+LPDIRECT3DTEXTURE9 g_pTextureItemBill = NULL;							//テクスチャへのポインタ(ちゅーる)
 int g_nCntItem = 0;														//現状のアイテム数
 
 //============================================================
@@ -45,13 +45,15 @@ void InitItem()
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		//各種初期化
-		g_Item[nCntItem].pMesh = NULL;									//メッシュポインタ
-		g_Item[nCntItem].pBuffMat = NULL;								//マテリアル
-		g_Item[nCntItem].dwNumMat = 0;									//頂点情報
 		g_Item[nCntItem].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//位置
 		g_Item[nCntItem].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//向き
+		g_Item[nCntItem].vtxMax = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//頂点の最大
+		g_Item[nCntItem].vtxMin = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//頂点の最小
+		g_Item[nCntItem].size = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			//直径
 		g_Item[nCntItem].Type = 0;										//種類
 		g_Item[nCntItem].bUse = false;									//使用しいていない状態
+		g_Item[nCntItem].bModel = true;									//とりあえずモデルってことにしとく
+		g_Item[nCntItem].pMesh = NULL;									//メッシュ
 
 		//;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 		//ビルボード
@@ -91,7 +93,7 @@ void InitItem()
 		D3DXMatrixIdentity(&g_Item[nCntItem].mtxWorld);
 
 		//Xファイルの読込
-		D3DXLoadMeshFromX(NULL,
+		D3DXLoadMeshFromX("data\\MODEL\\box000.x",
 			D3DXMESH_SYSTEMMEM,
 			pDevice,
 			NULL,
@@ -99,6 +101,64 @@ void InitItem()
 			NULL,
 			&g_Item[nCntItem].dwNumMat,
 			&g_Item[nCntItem].pMesh);
+
+		int nNumVtx;													//最大頂点数
+		DWORD sizeFVF;													//頂点フォーマットのサイズ
+		BYTE* pVtxBUff;													//頂点バッファへのポインタ
+
+		//頂点数の取得			
+		nNumVtx = g_Item[nCntItem].pMesh->GetNumVertices();
+
+		//頂点フォーマットのサイズを取得
+		sizeFVF = D3DXGetFVFVertexSize(g_Item[nCntItem].pMesh->GetFVF());
+
+		//頂点バッファのロック
+		g_Item[nCntItem].pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBUff);
+
+		for (int nCnt = 0; nCnt < nNumVtx; nCnt++)
+		{
+			//頂点座標の代入
+			D3DXVECTOR3 vtx = *(D3DXVECTOR3*)pVtxBUff;
+
+			//頂点座標を比較してモデルの最大最小を取得
+
+			if (vtx.x > g_Item[nCntItem].vtxMax.x)//x最大値
+			{
+				g_Item[nCntItem].vtxMax.x = vtx.x;
+			}
+			else if (vtx.x < g_Item[nCntItem].vtxMin.x)//x最小値
+			{
+				g_Item[nCntItem].vtxMin.x = vtx.x;
+			}
+
+			if (vtx.y > g_Item[nCntItem].vtxMax.y)//y最大値
+			{
+				g_Item[nCntItem].vtxMax.y = vtx.y;
+			}
+			else if (vtx.y < g_Item[nCntItem].vtxMin.y)//y最小値
+			{
+				g_Item[nCntItem].vtxMin.y = vtx.y;
+			}
+
+			if (vtx.z > g_Item[nCntItem].vtxMax.z)//z最大値
+			{
+				g_Item[nCntItem].vtxMax.z = vtx.z;
+			}
+			else if (vtx.z < g_Item[nCntItem].vtxMin.z)//z最小値
+			{
+				g_Item[nCntItem].vtxMin.z = vtx.z;
+			}
+
+			//頂点フォーマットのサイズ分ポインタを進める
+			pVtxBUff += sizeFVF;
+		}
+
+		//頂点バッファのアンロック
+		g_Item[nCntItem].pMesh->UnlockVertexBuffer();
+
+		//サイズの初期化
+		g_Item[nCntItem].size = g_Item[nCntItem].vtxMax - g_Item[nCntItem].vtxMin;
+
 
 		//マテリアルデータへのポインタを取得
 		pMat = (D3DXMATERIAL*)g_Item[nCntItem].pBuffMat->GetBufferPointer();
@@ -118,6 +178,8 @@ void InitItem()
 			}
 		}
 	}
+	//頂点バッファのアンロック
+	g_pVtxBuffItemBill->Unlock();
 }
 
 //============================================================
@@ -161,6 +223,8 @@ void UpdateItem()
 	{
 		if (g_Item[nCntItem].bUse == true)
 		{
+			//当たり判定
+			CollisionItem(nCntItem);
 		}
 	}
 }
@@ -300,6 +364,10 @@ void DrawItemBillboard()
 //============================================================
 void SetItem(D3DXVECTOR3 pos, int nType)
 {
+	//頂点情報へのポインタ
+	VERTEX_3D* pVtx = NULL;
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();
+
 	for (int nCntItem = 0; nCntItem < MAX_ITEM; nCntItem++)
 	{
 		if (g_nCntItem != MAX_ITEM)//最大ドロップ数を超えてないなら
@@ -315,7 +383,31 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 				{
 				case 0://ちゅ～る
 
-					g_Item[nCntItem].bModel = false;
+					g_Item[nCntItem].bModel = false;//ビルボード
+
+					//頂点バッファをロック
+					g_pVtxBuffItemBill->Lock(0, 0, (void**)&pVtx, 0);
+
+					pVtx[0].pos.x = g_Item[nCntItem].pos.x - ITEM_RADIUS;
+					pVtx[0].pos.y = g_Item[nCntItem].pos.y + ITEM_RADIUS;
+					pVtx[0].pos.z = g_Item[nCntItem].pos.z ;
+
+					pVtx[1].pos.x = g_Item[nCntItem].pos.x + ITEM_RADIUS;
+					pVtx[1].pos.y = g_Item[nCntItem].pos.y + ITEM_RADIUS;
+					pVtx[1].pos.z = g_Item[nCntItem].pos.z;
+
+					pVtx[2].pos.x = g_Item[nCntItem].pos.x - ITEM_RADIUS;
+					pVtx[2].pos.y = g_Item[nCntItem].pos.y - ITEM_RADIUS;
+					pVtx[2].pos.z = g_Item[nCntItem].pos.z;
+
+					pVtx[3].pos.x = g_Item[nCntItem].pos.x + ITEM_RADIUS;
+					pVtx[3].pos.y = g_Item[nCntItem].pos.y - ITEM_RADIUS;
+					pVtx[3].pos.z = g_Item[nCntItem].pos.z;
+
+					pVtx += 4;
+
+					//頂点バッファのアンロック
+					g_pVtxBuffItemBill->Unlock();
 
 					break;
 
@@ -323,11 +415,31 @@ void SetItem(D3DXVECTOR3 pos, int nType)
 
 					g_Item[nCntItem].bModel = true;
 
+					//Xファイルの読込
+					D3DXLoadMeshFromX("data\\MODEL\\box000.x",
+						D3DXMESH_SYSTEMMEM,
+						pDevice,
+						NULL,
+						&g_Item[nCntItem].pBuffMat,
+						NULL,
+						&g_Item[nCntItem].dwNumMat,
+						&g_Item[nCntItem].pMesh);
+
 					break;
 
 				case 2://おもちゃ
 
 					g_Item[nCntItem].bModel = true;
+
+					//Xファイルの読込
+					D3DXLoadMeshFromX("data\\MODEL\\box000.x",
+						D3DXMESH_SYSTEMMEM,
+						pDevice,
+						NULL,
+						&g_Item[nCntItem].pBuffMat,
+						NULL,
+						&g_Item[nCntItem].dwNumMat,
+						&g_Item[nCntItem].pMesh);
 
 					break;
 
@@ -355,13 +467,50 @@ void CollisionItem(int nIndexItem)
 	//プレイヤーの情報取得
 	Player* pPlayer = GetPlayer();
 
-	if (g_Item[nIndexItem].bUse == true)//使用している状態なら
+	if (g_Item[nIndexItem].bModel == true)//モデルなら
 	{
-		if (g_Item[nIndexItem].bModel == true)//モデルなら
+		//プレイヤーの半径取得
+		D3DXVECTOR3 playerRadius = pPlayer->size / 2.0f;
+
+		//距離
+		float Distance = (pPlayer->pos.x - g_Item[nIndexItem].pos.x) * (pPlayer->pos.x - g_Item[nIndexItem].pos.x) +
+			(pPlayer->pos.z - g_Item[nIndexItem].pos.z) * (pPlayer->pos.z - g_Item[nIndexItem].pos.z);
+
+		//２つの半径
+		float Radius = (playerRadius.z + g_Item[nIndexItem].size.z / 2.0f) * (playerRadius.z + g_Item[nIndexItem].size.z / 2.0f);
+
+		if (Distance <= Radius)//当たってるなら
 		{
+			g_Item[nIndexItem].bUse = false;						//使用していない状態にする
+			pPlayer->nCntItem++;									//アイテム所持数カウント
+			g_nCntItem--;											//ドロップ中のアイテム数デクリメント
 		}
-		else if (g_Item[nIndexItem].bModel == false)//ビルボードなら
+	}
+	else if (g_Item[nIndexItem].bModel == false)//ビルボードなら
+	{
+		D3DXVECTOR3 vecPlayer, vecWall;								//aPos[0]からそれぞれへのベクトル格納用
+		D3DXVECTOR3 aPos[2];										//各頂点格納用
+		D3DXVECTOR3 fver;											//外積格納用
+
+		//頂点座標格納
+		aPos[0].x = g_Item[nIndexItem].pos.x - cosf(g_Item[nIndexItem].rot.y) * ITEM_RADIUS;
+		aPos[0].z = g_Item[nIndexItem].pos.z + sinf(g_Item[nIndexItem].rot.y) * ITEM_RADIUS;
+
+		aPos[1].x = g_Item[nIndexItem].pos.x + cosf(g_Item[nIndexItem].rot.y) * ITEM_RADIUS;
+		aPos[1].z = g_Item[nIndexItem].pos.z - sinf(g_Item[nIndexItem].rot.y) * ITEM_RADIUS;
+
+		//ベクトル
+		vecWall = aPos[1] - aPos[0];								//アイテムのベクトル(境界線ベクトル)
+		vecPlayer = pPlayer->pos - aPos[0];							//aPos[0]からプレイヤーへのベクトル
+
+		//外積
+		D3DXVec3Cross(&fver, &vecWall, &vecPlayer);
+
+		if (fver.y < 0)//当たってるなら
 		{
+			g_Item[nIndexItem].bUse = false;						//使用していない状態にする
+			pPlayer->nCntItem++;									//アイテム所持数カウント
+			g_nCntItem--;											//ドロップ中のアイテム数デクリメント
 		}
 	}
 }

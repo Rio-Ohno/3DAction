@@ -23,6 +23,9 @@ typedef struct
 	DWORD dwNumMat;										//マテリアルの数
 	D3DXVECTOR3 pos;									//位置(オフセット)
 	D3DXVECTOR3 rot;									//向き
+	D3DXVECTOR3 vtxMax;									//最大頂点
+	D3DXVECTOR3 vtxMin;									//最小頂点
+	D3DXVECTOR3 size;									//直径
 	LPDIRECT3DTEXTURE9 apTextureItem[MAX_MAT_ITEM];		//テクスチャ
 	D3DXMATRIX mtxWorld;								//ワールドマトリックス
 	int Type;											//種類
