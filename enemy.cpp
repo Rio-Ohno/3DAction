@@ -469,7 +469,7 @@ void UpdateEnemy()
 				{
 					//アイテムドロップ
 					int nType = rand() % 12;											//ドロップ率:25%	種類:33% (偏りなし)
-					SetItem(g_enemy[nCntEnemy].pos, 1);
+					SetItem(g_enemy[nCntEnemy].pos, nType);
 				}
 			}
 
