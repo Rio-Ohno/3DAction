@@ -1,10 +1,35 @@
-﻿  bullet.cpp
+﻿  wave.cpp
+  bullet.cpp
+  camera.cpp
+C:\Users\student\source\repos\3D(cat)\camera.cpp(165,68): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\source\repos\3D(cat)\camera.cpp(166,68): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\source\repos\3D(cat)\camera.cpp(167,68): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\source\repos\3D(cat)\camera.cpp(169,68): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\student\source\repos\3D(cat)\camera.cpp(171,68): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+  effect.cpp
+  enemy.cpp
+  explosion.cpp
+  fade.cpp
   game.cpp
+  input.cpp
+  Item.cpp
+  light.cpp
+  main.cpp
+  meshcylinder.cpp
+  meshfield.cpp
+  object.cpp
+  pause.cpp
   player.cpp
+  result.cpp
+  shadow.cpp
+  sound.cpp
+  コンパイル中...
+  title.cpp
+  UI.cpp
   wall.cpp
   コード生成しています。
-  10 of 135 functions ( 7.4%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    5 functions had inline decision re-evaluated but remain unchanged
+  55 of 145 functions (37.9%) were compiled, the rest were copied from previous compilation.
+    11 functions were new in current compilation
+    38 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
   3D(cat).vcxproj -> C:\Users\student\source\repos\3D(cat)\3D(cat).exe
