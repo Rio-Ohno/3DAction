@@ -11,17 +11,16 @@
 
 //マクロ定義
 #define MAX_WORD (216)										//最大文字数
-#define WAVE_0 "data\\wave0.txt"							//ウェーブ0
-#define WAVE_1 "data\\wave1.txt"							//ウェーブ1
-#define WAVE_2 "data\\wave2.txt"							//ウェーブ2
-#define WAVE_3 "data\\wave3.txt"							//ウェーブ3
-
+#define WAVE_0 "data\\wave\\wave0.txt"						//ウェーブ0
+//#define WAVE_1 "data\\wavw\\wave1.txt"						//ウェーブ1
+//#define WAVE_2 "data\\wavw\\wave2.txt"						//ウェーブ2
+//#define WAVE_3 "data\\wavw\\wave3.txt"						//ウェーブ3
+//
 //ウェーブ構造体
 typedef struct
 {
 	D3DXVECTOR3 pos;										//位置
-	D3DXVECTOR3 move;										//移動量
-	int nType;												//種類
+	D3DXVECTOR3 rot;										//向き
 	bool bUse;												//使用しているかどうか
 }LoadInfo;
 
@@ -39,8 +38,7 @@ void InitWave()
 	for (int nCnt = 0; nCnt < MAX_ENEMY; nCnt++)
 	{
 		g_Info[nCnt].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Info[nCnt].move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		g_Info[nCnt].nType = 0;
+		g_Info[nCnt].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_Info[nCnt].bUse = false;
 	}
 
@@ -56,12 +54,10 @@ void LoadWave()
 {
 	FILE* pFile;											//外部ファイルへのポインタ
 
-	int nType = 0, nLife = 0;
-	D3DXVECTOR3 pos = {};
-	//D3DXVECTOR3 move = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 pos ,rot= {};
 
-	//敵の数を取得
-	//g_nCntEnemy = GetNumEnemy();
+	//敵の数取得
+	g_nCntEnemy = GetNumEnemy();
 
 	//各ウェーブのファイルを開く
 	switch (g_nWave)
@@ -72,11 +68,11 @@ void LoadWave()
 
 		break;
 
-	case 1://Wavw2
+	//case 1://Wavw2
 
-		pFile = fopen(WAVE_1, "r");
+	//	pFile = fopen(WAVE_1, "r");
 
-		break;
+	//	break;
 
 		//case 2://Wavw3
 
@@ -88,7 +84,7 @@ void LoadWave()
 
 		pFile = NULL;
 
-		g_bFinish = true;									//ウェーブ終了
+		//g_bFinish = true;									//ウェーブ終了
 
 		break;
 	}
@@ -107,33 +103,30 @@ void LoadWave()
 				{
 					fscanf(pFile, "%s", &aString[0]);
 
-					if (strcmp(aString, "TYPE") == 0)//TYPEを読込んだなら
-					{
-						//種類の取得
-						fscanf(pFile, "%d", &nType);
-					}
-					else if (strcmp(aString, "POS") == 0)//POSを読込んだなら
+					if (strcmp(aString, "POS") == 0)//POSを読込んだなら
 					{
 						//位置の取得
 						fscanf(pFile, "%f", &pos.x);
 						fscanf(pFile, "%f", &pos.y);
 						fscanf(pFile, "%f", &pos.z);
 					}
-					else if (strcmp(aString, "LIFE") == 0)//LIFEを読込んだなら
+					else if (strcmp(aString, "ROT") == 0)//ROTを読込んだなら
 					{
-						//寿命の取得
-						fscanf(pFile, "%d", &nLife);
+						//向きの取得
+						fscanf(pFile, "%f", &rot.x);
+						fscanf(pFile, "%f", &rot.y);
+						fscanf(pFile, "%f", &rot.z);
 					}
 					else if (strcmp(aString, "END_ENEMYSET") == 0)//END_ENEMYSETを読込んだなら
 					{
 						//敵の設定
-						//SetEnemy(pos, nType, nLife);
+						SetEnemy(pos, rot);
 
 						break;
 					}
 				}
 			}
-			if (strcmp(aString, "END_SCRIPI") == 0)
+			if (strcmp(aString, "END_SCRIPT") == 0)
 			{
 				break;
 			}

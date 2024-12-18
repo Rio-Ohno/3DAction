@@ -13,6 +13,7 @@
 
 //グロ－バル変数宣言
 Enemy g_enemy[MAX_ENEMY];
+int g_nCntNumEnemy = 0;
 static  Key_ENEMY_Info g_keyNeutrall[] =
 { //Key0......................................................
 	{40,
@@ -95,7 +96,7 @@ void InitEnemy()
 	for (nCntEnemy = 0; nCntEnemy < MAX_ENEMY; nCntEnemy++)
 	{
 		//各種初期化
-		g_enemy[nCntEnemy].pos = D3DXVECTOR3(50.0f, 0.0f, 0.0f);
+		g_enemy[nCntEnemy].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].posOld = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		g_enemy[nCntEnemy].rotDest = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -115,6 +116,7 @@ void InitEnemy()
 		g_enemy[nCntEnemy].bjump = false;
 		g_enemy[nCntEnemy].bUse = true;
 		g_enemy[nCntEnemy].bFrag = false;
+		g_nCntNumEnemy = 0;
 
 		//ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&g_enemy[nCntEnemy].mtxWorldEnemy);
@@ -425,12 +427,12 @@ void UninitEnemy()
 			}
 
 			//テクスチャの破棄
-			for (int nCnt1 = 0; nCnt1 < (int)g_enemy[nCntEnemy].aModel[nCntModel].dwNumMat; nCnt1++)
+			for (int nCntMat = 0; nCntMat < (int)g_enemy[nCntEnemy].aModel[nCntModel].dwNumMat; nCntMat++)
 			{
-				if (g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCnt1] != NULL)
+				if (g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCntMat] != NULL)
 				{
-					g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCnt1]->Release();
-					g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCnt1] = NULL;
+					g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCntMat]->Release();
+					g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCntMat] = NULL;
 				}
 			}
 		}
@@ -468,7 +470,7 @@ void UpdateEnemy()
 				else if(g_enemy[nCntEnemy].nCntFream==30)
 				{
 					//アイテムドロップ
-					int nType = rand() % 12;											//ドロップ率:25%	種類:33% (偏りなし)
+					int nType = rand() % 12;//ドロップ率:25%	種類:33% (偏りなし)
 					SetItem(g_enemy[nCntEnemy].pos, nType);
 				}
 			}
@@ -599,16 +601,16 @@ void DrawEnemy()
 				//パーツのワールドマトリックスの設定
 				pDevice->SetTransform(D3DTS_WORLD, &g_enemy[nCntEnemy].aModel[nCntModel].mtxWorld);
 
-				for (int nCnt1 = 0; nCnt1 < (int)g_enemy[nCntEnemy].aModel[nCntModel].dwNumMat; nCnt1++)
+				for (int nCntMat = 0; nCntMat < (int)g_enemy[nCntEnemy].aModel[nCntModel].dwNumMat; nCntMat++)
 				{
 					//マテリアルの設定
-					pDevice->SetMaterial(&pMat[nCnt1].MatD3D);
+					pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
 
 					//テクスチャの設定
-					pDevice->SetTexture(0, g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCnt1]);
+					pDevice->SetTexture(0, g_enemy[nCntEnemy].aModel[nCntModel].apTextureModel[nCntMat]);
 
 					//モデル(パーツ)の描画
-					g_enemy[nCntEnemy].aModel[nCntModel].pMesh->DrawSubset(nCnt1);
+					g_enemy[nCntEnemy].aModel[nCntModel].pMesh->DrawSubset(nCntMat);
 				}
 
 			}
@@ -631,6 +633,9 @@ void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 rot)
 			g_enemy[nCntEnemy].rot = rot;//向きの設定
 
 			g_enemy[nCntEnemy].bUse = true;//使用している状態にする
+			g_nCntNumEnemy++;
+
+			break;
 		}
 	}
 }
@@ -796,7 +801,16 @@ void HitEnemy(int nIndxEnemy)
 		g_enemy[nIndxEnemy].motionType = MOTIONTYPE_ENEMY_ESCAPE;
 		g_enemy[nIndxEnemy].rotDest.y = pPlayer->rot.y;
 		g_enemy[nIndxEnemy].rot.y = pPlayer->rot.y;
+		g_nCntNumEnemy--;
 	}
+}
+
+//============================================================
+// 敵の数取得
+//============================================================
+int GetNumEnemy()
+{
+	return g_nCntNumEnemy;
 }
 
 //============================================================

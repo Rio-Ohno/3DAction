@@ -6,6 +6,7 @@
 //============================================================
 
 #include"game.h"
+#include<time.h>
 #include"player.h"
 #include"bullet.h"
 #include"explosion.h"
@@ -20,8 +21,8 @@
 #include"input.h"
 #include"enemy.h"
 #include "effect.h"
-#include<time.h>
 #include "Item.h"
+#include"wave.h"
 
 //グローバル変数
 GAMESTATE g_gameState = GAMESTATE_NONE;
@@ -99,8 +100,8 @@ void InitGame()
 
 	InitLight();
 
-	////ウェーブの初期化
-	//InitWave();
+	//ウェーブの初期化
+	InitWave();
 
 	////スコアの初期化
 	//InitScore();
@@ -109,8 +110,8 @@ void InitGame()
 	////パーティクル初期化処理
 	//InitParticle();
 
-	////ゲームの読込処理
-	//LoadWave();
+	//ゲームの読込処理
+	LoadWave();
 }
 
 //=============================================================================================================
@@ -248,20 +249,20 @@ void UpdateGame()
 			//UpdateParticle();
 		}
 
-	//Enemy* pEnemy;                                                      //敵情報へのポインタ
+	Enemy* pEnemy;                                                      //敵情報へのポインタ
 
-	////敵の取得
-	//pEnemy = GetEnemy();
+	//敵の取得
+	pEnemy = GetEnemy();
 
-	////敵数の取得
-	//int NumEnemy = GetNumEnemy();
+	//敵数の取得
+	int NumEnemy = GetNumEnemy();
 	//bool finish = false;
 
-	//if (NumEnemy <= 0)
-	//{
-	//	//ウェーブの読込処理
-	//	LoadWave();
-	//}
+	if (NumEnemy <= 0)
+	{
+		//ウェーブの読込処理
+		LoadWave();
+	}
 
 
 	//デバック用......................................................
@@ -282,26 +283,27 @@ void UpdateGame()
 	#endif //  _DEBUG
 	//...........................................................
 
-		//プレイヤーの情報取得
-		Player* pPlayer = GetPlayer();
+	//プレイヤーの情報取得
+	Player* pPlayer = GetPlayer();
 
-		if (pPlayer->bFrag == true)
-		{
-			//画面遷移(Resultへ)
-			SetFade(MODE_RESULT);
-		}
+	if (pPlayer->bFrag == true)
+	{
+		//画面遷移(Resultへ)
+		SetFade(MODE_RESULT);
+	}
 			
 	//switch (g_gameState)
 	//{
 	//case GAMESTATE_NORMAL:
 
-	//	//finish = GetFinish();
+	//finish = GetFinish();
 
-	//	//if (finish==true)
-	//	//{
-	//	//	SetResult(RESULT_WIN);
-	//	//	SetGameState(GAMESTATE_END);
-	//	//}
+	//if (finish==true)
+	//{
+	//	//SetResult(RESULT_WIN);
+	//	//画面の設定
+	//	SetFade(MODE_RESULT);
+	//}
 
 	//	break;
 
